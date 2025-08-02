@@ -4,7 +4,7 @@ pragma solidity ^0.8.19;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 interface IYieldMindVault {
     function updatePositionValue(address user, uint256 newValue) external;
@@ -65,7 +65,7 @@ contract AIStrategyManager is Ownable, ReentrancyGuard {
         _;
     }
     
-    constructor(address _yieldMindVault) {
+    constructor(address _yieldMindVault) Ownable(msg.sender) {
         yieldMindVault = IYieldMindVault(_yieldMindVault);
     }
     
@@ -176,24 +176,24 @@ contract AIStrategyManager is Ownable, ReentrancyGuard {
     /**
      * @dev Calculate allocation percentages for selected protocols
      */
-    function _calculateAllocations(address[] memory protocols, uint256 totalAmount) 
+    function _calculateAllocations(address[] memory selectedProtocols, uint256 totalAmount) 
         internal 
         view 
         returns (uint256[] memory) 
     {
-        uint256[] memory allocations = new uint256[](protocols.length);
+        uint256[] memory allocations = new uint256[](selectedProtocols.length);
         
         // Simplified allocation: distribute based on inverse risk
         uint256 totalInverseRisk = 0;
-        for (uint256 i = 0; i < protocols.length; i++) {
-            if (protocols[i] != address(0)) {
-                totalInverseRisk += 100 - protocols[protocols[i]].riskScore;
+        for (uint256 i = 0; i < selectedProtocols.length; i++) {
+            if (selectedProtocols[i] != address(0)) {
+                totalInverseRisk += 100 - protocols[selectedProtocols[i]].riskScore;
             }
         }
         
-        for (uint256 i = 0; i < protocols.length; i++) {
-            if (protocols[i] != address(0)) {
-                uint256 inverseRisk = 100 - protocols[protocols[i]].riskScore;
+        for (uint256 i = 0; i < selectedProtocols.length; i++) {
+            if (selectedProtocols[i] != address(0)) {
+                uint256 inverseRisk = 100 - protocols[selectedProtocols[i]].riskScore;
                 allocations[i] = (totalAmount * inverseRisk) / totalInverseRisk;
             }
         }
@@ -252,7 +252,7 @@ contract AIStrategyManager is Ownable, ReentrancyGuard {
      */
     function _deployToOptimalProtocols(
         address user,
-        address[] memory protocols,
+        address[] memory targetProtocols,
         uint256[] memory allocations
     ) internal {
         // Implementation for rebalancing deposits

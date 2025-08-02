@@ -3,9 +3,9 @@ pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
 
 interface IMINDStaking {
     function getUserTier(address user) external view returns (uint8);
@@ -60,7 +60,7 @@ contract YieldMindVault is ReentrancyGuard, Ownable, Pausable {
     constructor(
         address _mindStaking,
         address _strategyManager
-    ) {
+    ) Ownable(msg.sender) {
         mindStaking = IMINDStaking(_mindStaking);
         strategyManager = IAIStrategyManager(_strategyManager);
         

@@ -21,7 +21,7 @@ contract MIND is ERC20, ERC20Burnable, Ownable {
     event MinterAdded(address indexed minter);
     event MinterRemoved(address indexed minter);
     
-    constructor() ERC20("YieldMind", "MIND") {
+    constructor() ERC20("YieldMind", "MIND") Ownable(msg.sender) {
         // Initial mint to deployer for distribution
         _mint(msg.sender, TEAM_ALLOCATION + TREASURY_ALLOCATION + LIQUIDITY_ALLOCATION);
     }

@@ -4,7 +4,7 @@ pragma solidity ^0.8.19;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 interface IMIND {
     function burn(uint256 amount) external;
@@ -50,7 +50,7 @@ contract FeeManager is Ownable, ReentrancyGuard {
         address _mindStaking,
         address _devTreasury,
         address _dexRouter
-    ) {
+    ) Ownable(msg.sender) {
         mindToken = IERC20(_mindToken);
         mindStaking = IMINDStaking(_mindStaking);
         devTreasury = _devTreasury;
