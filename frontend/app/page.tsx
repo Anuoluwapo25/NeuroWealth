@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { TrendingUp, Zap, Shield, Globe } from 'lucide-react';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { GlowCard } from '@/components/ui/glow-card';
@@ -16,10 +15,7 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+          <div
             className="text-center"
           >
             <h1 className="font-space-grotesk text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight drop-shadow-lg">
@@ -58,11 +54,8 @@ export default function LandingPage() {
                 { step: '3', title: 'Auto-Deploy', desc: 'Funds deployed across chains' },
                 { step: '4', title: 'Earn', desc: 'Watch your portfolio grow' },
               ].map((item, index) => (
-                <motion.div
+                <div
                   key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
                   className="text-center"
                 >
                   <div className="w-12 h-12 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg mx-auto mb-3 animate-pulse">
@@ -70,10 +63,10 @@ export default function LandingPage() {
                   </div>
                   <h3 className="font-space-grotesk text-lg font-bold text-white mb-2 tracking-tight">{item.title}</h3>
                   <p className="text-sm text-gray-400 font-inter">{item.desc}</p>
-                </motion.div>
+                </div>
               ))}
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -81,41 +74,32 @@ export default function LandingPage() {
       <section className="py-16 bg-slate-800/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
+            <div
               className="text-center"
             >
               <div className="text-4xl font-ibm-plex-mono font-bold text-green-400 mb-2 animate-pulse">
                 ${(mockData.tvl / 1000000).toFixed(0)}M
               </div>
               <div className="text-gray-300">Total Value Locked</div>
-            </motion.div>
+            </div>
             
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
+            <div
               className="text-center"
             >
               <div className="text-4xl font-ibm-plex-mono font-bold text-blue-400 mb-2 animate-pulse">
                 {mockData.averageAPY}%
               </div>
               <div className="text-gray-300">Average APY</div>
-            </motion.div>
+            </div>
             
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
+            <div
               className="text-center"
             >
               <div className="text-4xl font-ibm-plex-mono font-bold text-purple-400 mb-2 animate-pulse">
                 {mockData.supportedChains}
               </div>
               <div className="text-gray-300">Supported Chains</div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
@@ -123,10 +107,7 @@ export default function LandingPage() {
       {/* Features Section */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+          <div
             className="text-center mb-16"
           >
             <h2 className="font-space-grotesk text-4xl font-bold text-white mb-4">
@@ -135,7 +116,7 @@ export default function LandingPage() {
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">
               Cutting-edge AI technology meets DeFi to deliver superior returns
             </p>
-          </motion.div>
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
@@ -160,11 +141,8 @@ export default function LandingPage() {
                 description: 'Continuous monitoring and rebalancing ensures optimal performance 24/7.',
               },
             ].map((feature, index) => (
-              <motion.div
+              <div
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
               >
                 <GlowCard>
                   <feature.icon className="w-12 h-12 text-green-400 mb-4 animate-pulse" />
@@ -175,7 +153,7 @@ export default function LandingPage() {
                     {feature.description}
                   </p>
                 </GlowCard>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>

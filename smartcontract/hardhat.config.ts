@@ -22,13 +22,12 @@ const config: HardhatUserConfig = {
       url: process.env.CROSSFI_RPC_URL || "https://rpc.crossfi.com",
       chainId: 4157,
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
-      gasPrice: 20000000000, // 20 gwei
     },
     crossfiTestnet: {
       url: process.env.CROSSFI_TESTNET_RPC_URL || "https://testnet-rpc.crossfi.com",
-      chainId: 4158,
+      chainId: 4157,
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
-      gasPrice: 20000000000, // 20 gwei
+      gas: 30000000, // 30M gas limit
     },
   },
   etherscan: {

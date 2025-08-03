@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { ArrowLeft, TrendingUp } from 'lucide-react';
 import { useAccount } from 'wagmi';
 import { Navbar } from '@/components/layout/navbar';
@@ -93,11 +92,7 @@ export default function DepositPage() {
       <Navbar />
       
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
+        <div className="mb-8">
           <Link href="/" className="flex items-center text-gray-400 hover:text-white transition-colors mb-6">
             <ArrowLeft className="w-5 h-5 mr-2" />
             Back to Home
@@ -109,7 +104,7 @@ export default function DepositPage() {
           <p className="text-gray-300">
             Choose your token, set your risk preference, and let AI optimize your yields
           </p>
-        </motion.div>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Deposit Form */}
@@ -126,9 +121,6 @@ export default function DepositPage() {
                       selectedToken === token.symbol
                         ? 'border-gradient-to-r from-green-400 via-blue-400 to-purple-400 animate-gradient-x ring-2 ring-green-400/40 shadow-lg scale-105'
                         : 'border-slate-700 bg-slate-800/70 hover:border-blue-400/60'
-                    }`}
-                        ? 'border-green-400 bg-green-400/10'
-                        : 'border-slate-600 hover:border-slate-500'
                     }`}
                   >
                     <div className="text-white font-semibold">{token.symbol}</div>
@@ -174,7 +166,7 @@ export default function DepositPage() {
 
             {/* Risk Slider */}
             <GlowCard className="transition-transform duration-200 hover:scale-[1.02] hover:shadow-glow-card">
-              <RiskSlider value={riskLevel} onChange={setRiskLevel} animatedGradient />
+              <RiskSlider value={riskLevel} onChange={setRiskLevel} />
             </GlowCard>
 
             {/* Deposit Button */}

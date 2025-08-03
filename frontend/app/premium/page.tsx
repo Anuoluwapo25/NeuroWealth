@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 import { ArrowLeft, Zap, Crown, Star, Check } from 'lucide-react';
 import { useAccount } from 'wagmi';
 import { Navbar } from '@/components/layout/navbar';
@@ -81,11 +80,7 @@ export default function PremiumPage() {
       <Navbar />
       
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-12"
-        >
+        <div className="mb-12">
           <Link href="/" className="flex items-center text-gray-400 hover:text-white transition-colors mb-6">
             <ArrowLeft className="w-5 h-5 mr-2" />
             Back to Home
@@ -106,7 +101,7 @@ export default function PremiumPage() {
               Stake XFI tokens to access advanced AI analytics, priority rebalancing, and exclusive yield strategies
             </p>
           </div>
-        </motion.div>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
           {PREMIUM_TIERS.map((tier, index) => {
@@ -114,12 +109,7 @@ export default function PremiumPage() {
             const isSelected = selectedTier === index;
             
             return (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-              >
+              <div key={index}>
                 <GlowCard className={`transition-transform duration-200 hover:scale-[1.02] hover:shadow-glow-card ${isSelected ? 'ring-2 ring-yellow-400 shadow-lg scale-105' : ''}`}>
                   <div className="flex items-center mb-4">
                     <div className={`p-3 rounded-full bg-gradient-to-r ${tier.color} mr-3 animate-pulse`}>
@@ -170,16 +160,12 @@ export default function PremiumPage() {
                     </GradientButton>
                   </div>
                 </GlowCard>
-              </motion.div>
+              </div>
             );
           })}
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
+        <div>
           <GlowCard className="transition-transform duration-200 hover:scale-[1.02] hover:shadow-glow-card">
             <div className="text-center">
               <h3 className="font-space-grotesk text-2xl font-bold text-white mb-4 tracking-tight">
@@ -219,7 +205,7 @@ export default function PremiumPage() {
               </div>
             </div>
           </GlowCard>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

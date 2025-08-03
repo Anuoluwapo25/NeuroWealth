@@ -54,15 +54,16 @@ export function Navbar() {
           <div className="ml-4">
             <div className="relative group">
               <div className="absolute -inset-1 rounded-xl blur-xl opacity-80 group-hover:opacity-100 transition-all pointer-events-none bg-gradient-to-r from-green-400 via-blue-500 to-purple-500 animate-gradient-x" />
-              <ConnectButton
-                chainStatus="icon"
-                accountStatus={{
-                  smallScreen: 'avatar',
-                  largeScreen: 'full',
-                }}
-                showBalance={false}
-                className="relative z-10 px-4 py-2 rounded-xl font-semibold text-white shadow-lg bg-gradient-to-r from-green-400 via-blue-500 to-purple-500 bg-[length:200%_200%] animate-gradient-x hover:shadow-green-500/30 transition-transform hover:scale-105"
-              />
+              <div className="relative z-10 px-4 py-2 rounded-xl font-semibold text-white shadow-lg bg-gradient-to-r from-green-400 via-blue-500 to-purple-500 bg-[length:200%_200%] animate-gradient-x hover:shadow-green-500/30 transition-transform hover:scale-105">
+                <ConnectButton
+                  chainStatus="icon"
+                  accountStatus={{
+                    smallScreen: 'avatar',
+                    largeScreen: 'full',
+                  }}
+                  showBalance={false}
+                />
+              </div>
             </div>
           </div>
         </div>

@@ -2,7 +2,6 @@
 
 import { ButtonHTMLAttributes, forwardRef } from 'react';
 import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
 
 interface GradientButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: 'sm' | 'md' | 'lg';
@@ -17,6 +16,7 @@ export const GradientButton = forwardRef<HTMLButtonElement, GradientButtonProps>
       'text-white shadow-lg hover:shadow-xl',
       'focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50',
       'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-lg',
+      'hover:scale-105 active:scale-95',
       {
         'px-4 py-2 text-sm': size === 'sm',
         'px-6 py-3 text-base': size === 'md',
@@ -27,10 +27,8 @@ export const GradientButton = forwardRef<HTMLButtonElement, GradientButtonProps>
 
     if (variant === 'secondary') {
       return (
-        <motion.button
+        <button
           ref={ref}
-          whileHover={{ scale: disabled ? 1 : 1.02 }}
-          whileTap={{ scale: disabled ? 1 : 0.98 }}
           className={cn(
             baseClasses,
             'bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-500 hover:to-slate-600'
@@ -39,22 +37,20 @@ export const GradientButton = forwardRef<HTMLButtonElement, GradientButtonProps>
           {...props}
         >
           {children}
-        </motion.button>
+        </button>
       );
     }
 
     return (
-      <motion.button
+      <button
         ref={ref}
-        whileHover={{ scale: disabled ? 1 : 1.02 }}
-        whileTap={{ scale: disabled ? 1 : 0.98 }}
         className={baseClasses}
         disabled={disabled}
         {...props}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-blue-500 rounded-lg blur opacity-0 hover:opacity-20 transition-opacity duration-200" />
         <span className="relative">{children}</span>
-      </motion.button>
+      </button>
     );
   }
 );

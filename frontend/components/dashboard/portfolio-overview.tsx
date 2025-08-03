@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { TrendingUp, TrendingDown, DollarSign, Activity } from 'lucide-react';
 import { GlowCard } from '@/components/ui/glow-card';
 
@@ -40,11 +39,7 @@ export function PortfolioOverview({
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-      >
+      <div>
         <GlowCard className="transition-transform duration-200 hover:scale-[1.03] hover:shadow-glow-card focus-within:scale-[1.03] focus-within:shadow-glow-card cursor-pointer" >
           <div className="flex items-center justify-between">
             <div>
@@ -58,13 +53,9 @@ export function PortfolioOverview({
             </div>
           </div>
         </GlowCard>
-      </motion.div>
+      </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-      >
+      <div>
         <GlowCard className="transition-transform duration-200 hover:scale-[1.03] hover:shadow-glow-card focus-within:scale-[1.03] focus-within:shadow-glow-card cursor-pointer" >
           <div className="flex items-center justify-between">
             <div>
@@ -78,13 +69,9 @@ export function PortfolioOverview({
             </div>
           </div>
         </GlowCard>
-      </motion.div>
+      </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-      >
+      <div>
         <GlowCard className="transition-transform duration-200 hover:scale-[1.03] hover:shadow-glow-card focus-within:scale-[1.03] focus-within:shadow-glow-card cursor-pointer" >
           <div className="flex items-center justify-between">
             <div>
@@ -98,13 +85,9 @@ export function PortfolioOverview({
             </div>
           </div>
         </GlowCard>
-      </motion.div>
+      </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-      >
+      <div>
         <GlowCard className="transition-transform duration-200 hover:scale-[1.03] hover:shadow-glow-card focus-within:scale-[1.03] focus-within:shadow-glow-card cursor-pointer" >
           <div className="flex items-center justify-between">
             <div>
@@ -118,7 +101,7 @@ export function PortfolioOverview({
             </div>
           </div>
         </GlowCard>
-      </motion.div>
+      </div>
     </div>
   );
 }

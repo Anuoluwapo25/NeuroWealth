@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { ArrowLeft, RefreshCw, Download, Settings } from 'lucide-react';
 import { useAccount } from 'wagmi';
 import { Navbar } from '@/components/layout/navbar';
@@ -136,11 +135,7 @@ export default function DashboardPage() {
       <Navbar />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
+        <div className="mb-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
               <Link href="/" className="flex items-center text-gray-400 hover:text-white transition-colors mb-4">
@@ -170,7 +165,7 @@ export default function DashboardPage() {
               </GradientButton>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -191,11 +186,7 @@ export default function DashboardPage() {
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-          >
+          <div>
             <GlowCard>
               <h3 className="font-space-grotesk text-xl font-semibold text-white mb-4">
                 Portfolio Allocation
@@ -206,13 +197,9 @@ export default function DashboardPage() {
                 <PortfolioPie data={portfolioData.allocations} />
               )}
             </GlowCard>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3 }}
-          >
+          <div>
             <GlowCard>
               <h3 className="font-space-grotesk text-xl font-semibold text-white mb-4">
                 Performance History
@@ -223,25 +210,17 @@ export default function DashboardPage() {
                 <PerformanceChart data={portfolioData.historicalData} />
               )}
             </GlowCard>
-          </motion.div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-          >
+          <div>
             <AIInsights insights={aiInsights} />
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-          >
+          <div>
             <RebalanceHistory events={rebalanceHistory} />
-          </motion.div>
+          </div>
         </div>
       </div>
     </div>
