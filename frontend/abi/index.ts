@@ -6,22 +6,22 @@ import { FEE_MANAGER_ABI } from './fee-manager';
 
 export const MindContract = {
   abi: MIND_ABI,
-  address: '0x9b39Fb4c93d80dF3E91a0369c5B6599Cf80873A4',
+  address: '0x953386dF478cFb0E0daE7ADa16d22B61114b5148', // Somnia Testnet
 };
 
 export const MindStakingContract = {
   abi: MIND_STAKING_ABI,
-  address: '0xA4Dc2B96Eef1D5189260eb4a7e53C482C439d1b4',
+  address: '0x977fB30EE25E8A07855d512E1A877F2Bae377bf6', // Somnia Testnet
 };
 
 export const YieldMindVaultContract = {
   abi: YIELD_MIND_VAULT_ABI,
-  address: '0xD2D2cE855a37FB1FbbF131D869f3c17847B952F9',
+  address: '0xE1173422100262BA7B1D2141ACC629f8a8F07370', // Somnia Testnet
 };
 
 export const AiStrategyManagerContract = {
   abi: AI_STRATEGY_MANAGER_ABI,
-  address: '0xbe00F9a79aC39CD3FC8802bA1BF94Eae98C9d3f5',
+  address: '0x902CF9fC71d391320B9736A7e88B063AEf6608aC', // Somnia Testnet
 };
 
 export const FeeManagerContract = {

@@ -18,23 +18,40 @@ const config: HardhatUserConfig = {
     hardhat: {
       chainId: 1337,
     },
-    crossfi: {
-      url: process.env.CROSSFI_RPC_URL || "https://rpc.crossfi.com",
-      chainId: 4157,
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
-    },
-    crossfiTestnet: {
-      url: process.env.CROSSFI_TESTNET_RPC_URL || "https://testnet-rpc.crossfi.com",
-      chainId: 4157,
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
-      gas: 30000000, // 30M gas limit
-    },
+                    somnia: {
+                  url: process.env.SOMNIA_RPC_URL || "https://dream-rpc.somnia.network",
+                  chainId: 50312,
+                  accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+                },
+                somniaTestnet: {
+                  url: process.env.SOMNIA_TESTNET_RPC_URL || "https://dream-rpc.somnia.network",
+                  chainId: 50312,
+                  accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+                  gas: 30000000, // 30M gas limit
+                },
+    
   },
   etherscan: {
     apiKey: {
-      crossfi: process.env.CROSSFI_API_KEY || "",
+      somnia: process.env.SOMNIA_API_KEY || "",
     },
     customChains: [
+      {
+        network: "somnia",
+        chainId: 1946,
+        urls: {
+          apiURL: "https://explorer.somnia.network/api",
+          browserURL: "https://explorer.somnia.network",
+        },
+      },
+      {
+        network: "somniaTestnet",
+        chainId: 1947,
+        urls: {
+          apiURL: "https://testnet-explorer.somnia.network/api",
+          browserURL: "https://testnet-explorer.somnia.network",
+        },
+      },
       {
         network: "crossfi",
         chainId: 4157,

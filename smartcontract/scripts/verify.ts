@@ -1,14 +1,13 @@
 import { run } from "hardhat";
 
 async function main() {
-  console.log("🔍 Starting contract verification on CrossFi explorer...");
+  console.log("🔍 Starting contract verification on Somnia explorer...");
 
-  // Contract addresses from deployment (replace with actual addresses)
-  const MIND_TOKEN_ADDRESS = "0x..."; // Replace with actual address
-  const MIND_STAKING_ADDRESS = "0x..."; // Replace with actual address
-  const AI_STRATEGY_MANAGER_ADDRESS = "0x..."; // Replace with actual address
-  const YIELD_MIND_VAULT_ADDRESS = "0x..."; // Replace with actual address
-  const FEE_MANAGER_ADDRESS = "0x..."; // Replace with actual address
+  // Contract addresses from deployment
+  const MIND_TOKEN_ADDRESS = "0x953386dF478cFb0E0daE7ADa16d22B61114b5148";
+  const MIND_STAKING_ADDRESS = "0x977fB30EE25E8A07855d512E1A877F2Bae377bf6";
+  const AI_STRATEGY_MANAGER_ADDRESS = "0x902CF9fC71d391320B9736A7e88B063AEf6608aC";
+  const YIELD_MIND_VAULT_ADDRESS = "0xE1173422100262BA7B1D2141ACC629f8a8F07370";
 
   try {
     // Verify MIND token

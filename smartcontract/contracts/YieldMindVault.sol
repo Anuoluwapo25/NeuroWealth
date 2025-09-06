@@ -114,9 +114,12 @@ contract YieldMindVault is ReentrancyGuard, Ownable, Pausable {
         
         totalValueLocked += amount;
         
-        // Execute AI strategy
-        IERC20(token).approve(address(strategyManager), amount);
-        strategyManager.executeStrategy(amount, token);
+        // Execute AI strategy (if strategy manager is set)
+        if (address(strategyManager) != address(0)) {
+            IERC20(token).approve(address(strategyManager), amount);
+            IERC20(token).transfer(address(strategyManager), amount);
+            strategyManager.executeStrategy(amount, token);
+        }
         
         emit Deposit(msg.sender, token, amount);
         emit StrategyExecuted(msg.sender, amount);
@@ -217,6 +220,13 @@ contract YieldMindVault is ReentrancyGuard, Ownable, Pausable {
             minDeposit: minDeposit,
             maxDeposit: maxDeposit
         });
+    }
+    
+    /**
+     * @dev Update strategy manager address
+     */
+    function setStrategyManager(address _strategyManager) external onlyOwner {
+        strategyManager = IAIStrategyManager(_strategyManager);
     }
     
     /**
