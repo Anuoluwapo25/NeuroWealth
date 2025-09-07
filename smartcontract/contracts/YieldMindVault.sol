@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
@@ -17,33 +15,28 @@ interface IAIStrategyManager {
 }
 
 contract YieldMindVault is ReentrancyGuard, Ownable, Pausable {
-    using SafeERC20 for IERC20;
     
     // Events
-    event Deposit(address indexed user, address indexed token, uint256 amount);
-    event Withdrawal(address indexed user, address indexed token, uint256 amount);
+    event Deposit(address indexed user, uint256 amount);
+    event Withdrawal(address indexed user, uint256 amount);
     event StrategyExecuted(address indexed user, uint256 amount);
     event PerformanceFeeCollected(address indexed user, uint256 feeAmount);
     
     // Structs
     struct UserPosition {
-        uint256 principal;           // Original deposit amount
+        uint256 principal;           // Original STT deposit amount
         uint256 currentValue;        // Current position value
         uint256 lastUpdateTime;      // Last rebalance timestamp
-        address depositToken;        // Token used for deposit
         uint256 totalReturns;        // Lifetime returns
-    }
-    
-    struct SupportedToken {
-        bool isSupported;
-        uint256 minDeposit;
-        uint256 maxDeposit;
     }
     
     // State variables
     mapping(address => UserPosition) public userPositions;
-    mapping(address => SupportedToken) public supportedTokens;
     mapping(uint8 => uint256) public tierLimits; // Tier => max deposit limit
+    
+    // STT-specific limits
+    uint256 public constant MIN_DEPOSIT = 0.1 ether; // 0.1 STT minimum
+    uint256 public constant MAX_DEPOSIT = 1000 ether; // 1000 STT maximum
     
     IMINDStaking public mindStaking;
     IAIStrategyManager public strategyManager;
@@ -76,17 +69,18 @@ contract YieldMindVault is ReentrancyGuard, Ownable, Pausable {
     }
     
     /**
-     * @dev Deposit tokens into YieldMind for optimization
-     * @param token Address of token to deposit
-     * @param amount Amount to deposit
+     * @dev Deposit STT into YieldMind for optimization
+     * @param amount Amount of STT to deposit
      */
-    function deposit(address token, uint256 amount) 
+    function deposit(uint256 amount) 
         external 
+        payable
         nonReentrant 
         whenNotPaused 
     {
-        require(supportedTokens[token].isSupported, "Token not supported");
-        require(amount >= supportedTokens[token].minDeposit, "Below minimum deposit");
+        require(msg.value == amount, "Incorrect STT amount");
+        require(amount >= MIN_DEPOSIT, "Below minimum deposit");
+        require(amount <= MAX_DEPOSIT, "Exceeds maximum deposit");
         
         uint8 userTier = mindStaking.getUserTier(msg.sender);
         
@@ -95,19 +89,14 @@ contract YieldMindVault is ReentrancyGuard, Ownable, Pausable {
         uint256 newTotal = position.principal + amount;
         require(newTotal <= tierLimits[userTier], "Exceeds tier limit");
         
-        // Transfer tokens from user
-        IERC20(token).safeTransferFrom(msg.sender, address(this), amount);
-        
         // Update user position
         if (position.principal == 0) {
             // First deposit
             position.principal = amount;
             position.currentValue = amount;
-            position.depositToken = token;
             position.lastUpdateTime = block.timestamp;
         } else {
             // Additional deposit
-            require(position.depositToken == token, "Different token than existing position");
             position.principal += amount;
             position.currentValue += amount;
         }
@@ -116,12 +105,13 @@ contract YieldMindVault is ReentrancyGuard, Ownable, Pausable {
         
         // Execute AI strategy (if strategy manager is set)
         if (address(strategyManager) != address(0)) {
-            IERC20(token).approve(address(strategyManager), amount);
-            IERC20(token).transfer(address(strategyManager), amount);
-            strategyManager.executeStrategy(amount, token);
+            // Send STT to strategy manager
+            (bool success, ) = address(strategyManager).call{value: amount}("");
+            require(success, "Strategy execution failed");
+            strategyManager.executeStrategy(amount, address(0)); // address(0) for native token
         }
         
-        emit Deposit(msg.sender, token, amount);
+        emit Deposit(msg.sender, amount);
         emit StrategyExecuted(msg.sender, amount);
     }
     
@@ -163,14 +153,15 @@ contract YieldMindVault is ReentrancyGuard, Ownable, Pausable {
         totalValueLocked -= withdrawAmount;
         totalFeesCollected += performanceFee;
         
-        // Transfer tokens to user
-        IERC20(position.depositToken).safeTransfer(msg.sender, userReceives);
+        // Transfer STT to user
+        (bool success, ) = msg.sender.call{value: userReceives}("");
+        require(success, "STT transfer failed");
         
         if (performanceFee > 0) {
             emit PerformanceFeeCollected(msg.sender, performanceFee);
         }
         
-        emit Withdrawal(msg.sender, position.depositToken, userReceives);
+        emit Withdrawal(msg.sender, userReceives);
     }
     
     /**
@@ -207,20 +198,7 @@ contract YieldMindVault is ReentrancyGuard, Ownable, Pausable {
         }
     }
     
-    /**
-     * @dev Add supported token
-     */
-    function addSupportedToken(
-        address token, 
-        uint256 minDeposit, 
-        uint256 maxDeposit
-    ) external onlyOwner {
-        supportedTokens[token] = SupportedToken({
-            isSupported: true,
-            minDeposit: minDeposit,
-            maxDeposit: maxDeposit
-        });
-    }
+    // STT-only contract - no token management needed
     
     /**
      * @dev Update strategy manager address
@@ -239,7 +217,6 @@ contract YieldMindVault is ReentrancyGuard, Ownable, Pausable {
             uint256 principal,
             uint256 currentValue,
             uint256 totalReturns,
-            address depositToken,
             uint8 userTier
         ) 
     {
@@ -250,7 +227,6 @@ contract YieldMindVault is ReentrancyGuard, Ownable, Pausable {
             position.principal,
             position.currentValue,
             position.totalReturns,
-            position.depositToken,
             tier
         );
     }

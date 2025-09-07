@@ -76,7 +76,7 @@ export default function SupportPage() {
             <span className="bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">Support</span>
           </h1>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            We're here to help you maximize your DeFi returns
+            We&apos;re here to help you maximize your DeFi returns
           </p>
         </div>
 

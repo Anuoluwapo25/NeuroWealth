@@ -27,9 +27,17 @@ export default function LandingPage() {
             </h1>
             
             <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
-              YieldMind leverages cutting-edge AI to automatically optimize your cryptocurrency investments across Somnia's ecosystem, 
+              YieldMind leverages cutting-edge AI to automatically optimize your STT token investments across Somnia&apos;s ecosystem, 
               delivering superior returns while managing risk intelligently.
             </p>
+            
+            {/* Getting Started Banner */}
+            <div className="mb-8 p-4 bg-gradient-to-r from-green-400/10 to-blue-500/10 border border-green-400/20 rounded-xl">
+              <div className="flex items-center justify-center space-x-2 text-green-400">
+                <CheckCircle className="w-5 h-5" />
+                <span className="font-semibold">Ready to start earning? Connect your wallet and deposit STT tokens to begin!</span>
+              </div>
+            </div>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
               {/* Animated gradient blob */}
@@ -50,7 +58,7 @@ export default function LandingPage() {
             {/* Process Flow */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
               {[
-                { step: '1', title: 'Connect & Deposit', desc: 'Connect your wallet and deposit USDC, USDT, DAI, or SOMI tokens' },
+                { step: '1', title: 'Connect & Deposit', desc: 'Connect your wallet and deposit STT tokens to start earning' },
                 { step: '2', title: 'AI Analysis', desc: 'Our AI scans Somnia protocols for optimal yield opportunities' },
                 { step: '3', title: 'Auto-Deploy', desc: 'Funds automatically deployed across best-performing protocols' },
                 { step: '4', title: 'Earn & Grow', desc: 'Watch your portfolio grow with continuous optimization' },
@@ -111,10 +119,10 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="font-space-grotesk text-4xl font-bold text-white mb-4">
-              Powered by Somnia's Best Protocols
+              Powered by Somnia&apos;s Best Protocols
             </h2>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              Our AI automatically allocates your funds across Somnia's top-performing DeFi protocols
+              Our AI automatically allocates your funds across Somnia&apos;s top-performing DeFi protocols
             </p>
           </div>
 
@@ -158,7 +166,7 @@ export default function LandingPage() {
               {
                 tier: 'Free',
                 mindRequired: '0 MIND',
-                depositLimit: '$10,000',
+                depositLimit: '10,000 STT',
                 rebalanceFreq: '24 hours',
                 features: ['Basic AI optimization', 'Standard protocols', 'Community support'],
                 color: 'from-gray-400 to-gray-600'
@@ -166,7 +174,7 @@ export default function LandingPage() {
               {
                 tier: 'Premium',
                 mindRequired: '100 MIND',
-                depositLimit: '$100,000',
+                depositLimit: '100,000 STT',
                 rebalanceFreq: '4 hours',
                 features: ['Advanced AI strategies', 'Priority protocol access', 'Premium support', 'Higher APY opportunities'],
                 color: 'from-blue-400 to-blue-600'
@@ -174,7 +182,7 @@ export default function LandingPage() {
               {
                 tier: 'Pro',
                 mindRequired: '500 MIND',
-                depositLimit: '$1,000,000',
+                depositLimit: '1,000,000 STT',
                 rebalanceFreq: '1 hour',
                 features: ['Maximum AI optimization', 'Exclusive protocols', 'Dedicated support', 'Custom strategies', 'Early access features'],
                 color: 'from-green-400 to-green-600'
@@ -239,7 +247,7 @@ export default function LandingPage() {
               Why Choose YieldMind?
             </h2>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              Advanced AI technology meets Somnia's DeFi ecosystem to deliver superior returns
+              Advanced AI technology meets Somnia&apos;s DeFi ecosystem to deliver superior returns
             </p>
           </div>
 
@@ -300,7 +308,7 @@ export default function LandingPage() {
               How YieldMind Works
             </h2>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              Our AI-driven approach ensures optimal returns across Somnia's DeFi ecosystem
+              Our AI-driven approach ensures optimal returns across Somnia&apos;s DeFi ecosystem
             </p>
           </div>
 
@@ -384,11 +392,11 @@ export default function LandingPage() {
             <h2 className="font-space-grotesk text-4xl md:text-5xl font-bold text-white mb-6">
               Ready to Maximize Your{' '}
               <span className="bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
-                Crypto Returns?
+                STT Returns?
               </span>
             </h2>
             <p className="text-xl text-gray-300 mb-8">
-              Join thousands of users already earning superior yields with YieldMind's AI-powered optimization on Somnia.
+              Join thousands of users already earning superior yields with YieldMind&apos;s AI-powered STT optimization on Somnia.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link href="/deposit">
@@ -443,7 +451,7 @@ export default function LandingPage() {
                 <span className="font-space-grotesk font-bold text-3xl text-white tracking-tight drop-shadow-lg">YieldMind</span>
               </div>
               <p className="text-gray-400 mb-6 max-w-md">
-                The future of DeFi investing is here. AI-powered yield optimization on Somnia blockchain for superior returns.
+                The future of DeFi investing is here. AI-powered STT yield optimization on Somnia blockchain for superior returns.
               </p>
               <div className="flex space-x-4">
                 <div className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-green-400/20 transition-colors cursor-pointer">

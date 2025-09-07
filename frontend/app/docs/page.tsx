@@ -54,7 +54,7 @@ export default function DocsPage() {
             <span className="bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">Documentation</span>
           </h1>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Everything you need to know about YieldMind's AI-powered DeFi platform
+            Everything you need to know about YieldMind&apos;s AI-powered DeFi platform
           </p>
         </div>
 

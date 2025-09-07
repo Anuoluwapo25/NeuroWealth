@@ -10,7 +10,7 @@ export interface TokenConfig {
   logoUrl?: string;
 }
 
-// Somnia testnet token configurations
+// Somnia testnet token configuration - STT only
 export const SOMNIA_TOKENS: TokenConfig[] = [
   {
     symbol: 'STT',
@@ -19,34 +19,6 @@ export const SOMNIA_TOKENS: TokenConfig[] = [
     decimals: 18,
     isNative: true,
     logoUrl: '/tokens/stt.svg'
-  },
-  {
-    symbol: 'WSOMI',
-    name: 'Wrapped Somnia Token',
-    address: '0x046EDe9564A72571df6F5e44d0405360c0f4dCab', // Real address from Somnia docs
-    decimals: 18,
-    logoUrl: '/tokens/wsomi.svg'
-  },
-  {
-    symbol: 'USDC',
-    name: 'USD Coin',
-    address: '0x28bec7e30e6faee657a03e19bf1128aad7632a00', // Real address from Somnia docs
-    decimals: 6,
-    logoUrl: '/tokens/usdc.svg'
-  },
-  {
-    symbol: 'USDT',
-    name: 'Tether USD',
-    address: '0x67B302E35Aef5EEE8c32D934F5856869EF428330', // Real address from Somnia docs
-    decimals: 6,
-    logoUrl: '/tokens/usdt.svg'
-  },
-  {
-    symbol: 'WETH',
-    name: 'Wrapped Ethereum',
-    address: '0x936Ab8C674bcb567CD5dEB85D8A216494704E9D8', // Real address from Somnia docs
-    decimals: 18,
-    logoUrl: '/tokens/weth.svg'
   }
 ];
 
@@ -89,20 +61,14 @@ export const MOCK_TOKEN_ADDRESSES = {
   SOMI: '0x0000000000000000000000000000000000000000' // Native token
 };
 
-// Instructions for Somnia testnet
+// Instructions for Somnia testnet - STT only
 export const TOKEN_UPDATE_INSTRUCTIONS = `
-Somnia Testnet Configuration:
+Somnia Testnet Configuration - STT Only:
 
-✅ All token addresses are configured with real addresses from Somnia docs.
+✅ Focused on STT (Somnia Testnet Token) for simplicity and testing.
 
 Native Token:
 - STT: Somnia Testnet Token (native, no contract address needed)
-
-ERC20 Tokens (Real Addresses):
-- WSOMI: Wrapped Somnia Token
-- USDC: USD Coin  
-- USDT: Tether USD
-- WETH: Wrapped Ethereum
 
 Getting STT Test Tokens:
 - Join Somnia Discord: https://discord.gg/somnia
@@ -114,4 +80,6 @@ Resources:
 - Documentation: https://docs.somnia.network
 - Network Info: https://docs.somnia.network/developer/network-info
 - Testnet Explorer: https://explorer.somnia.network
+
+Note: ERC20 tokens will be added later once STT integration is perfected.
 `;

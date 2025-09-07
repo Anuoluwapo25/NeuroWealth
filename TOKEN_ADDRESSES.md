@@ -2,18 +2,18 @@
 
 ## Current Status
 
-✅ **SOMNIA TESTNET CONFIGURED!** The YieldMind frontend is configured for Somnia testnet with real token addresses.
+✅ **STT FOCUS MODE!** YieldMind is now focused exclusively on STT (Somnia Testnet Token) for simplified development and testing.
 
 ## Token Configuration
 
 ### Native Token (Ready to Use)
 - **STT** - Somnia Testnet Token (native, no contract address needed)
 
-### ERC20 Tokens (Real Addresses from Somnia Testnet)
-- **WSOMI** - Wrapped Somnia Token: `0x046EDe9564A72571df6F5e44d0405360c0f4dCab`
-- **USDC** - USD Coin: `0x28bec7e30e6faee657a03e19bf1128aad7632a00`
-- **USDT** - Tether USD: `0x67B302E35Aef5EEE8c32D934F5856869EF428330`
-- **WETH** - Wrapped Ethereum: `0x936Ab8C674bcb567CD5dEB85D8A216494704E9D8`
+### ERC20 Tokens (Temporarily Removed)
+- **WSOMI** - Wrapped Somnia Token: `0x046EDe9564A72571df6F5e44d0405360c0f4dCab` *(will be added later)*
+- **USDC** - USD Coin: `0x28bec7e30e6faee657a03e19bf1128aad7632a00` *(will be added later)*
+- **USDT** - Tether USD: `0x67B302E35Aef5EEE8c32D934F5856869EF428330` *(will be added later)*
+- **WETH** - Wrapped Ethereum: `0x936Ab8C674bcb567CD5dEB85D8A216494704E9D8` *(will be added later)*
 
 ## How to Update Token Addresses
 
@@ -87,7 +87,19 @@ For development on Somnia testnet, you need STT (Somnia Testnet Token):
    - Brief description of what you're building
    - Your GitHub profile
 
-**Note**: STT is the native token for Somnia testnet. ERC20 tokens (USDC/USDT/WETH/WSOMI) may need to be obtained through other means or bridges.
+**Note**: STT is the native token for Somnia testnet. 
+
+## Why STT Focus Mode?
+
+This simplified approach offers several advantages:
+
+1. **Simpler Development**: Focus on one token type (native) without ERC20 complexity
+2. **Easier Testing**: No need to handle token approvals or transfers
+3. **Faster Iteration**: Perfect the core functionality before adding complexity
+4. **Lower Risk**: Native tokens are simpler and safer to work with
+5. **Clear Path**: Once STT integration is perfect, ERC20 tokens can be added incrementally
+
+ERC20 tokens will be added back once STT integration is fully tested and working perfectly.
 
 ## Resources
 
