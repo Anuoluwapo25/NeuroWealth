@@ -89,7 +89,7 @@ export default function DocsPage() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               {[
                 { step: '1', title: 'Connect Wallet', desc: 'Connect your wallet to Somnia network' },
-                { step: '2', title: 'Deposit Funds', desc: 'Deposit USDC, USDT, DAI, or SOMI tokens' },
+                { step: '2', title: 'Deposit Funds', desc: 'Deposit  STT tokens' },
                 { step: '3', title: 'Stake MIND', desc: 'Optional: Stake MIND for premium features' },
                 { step: '4', title: 'Earn Rewards', desc: 'Watch your portfolio grow automatically' },
               ].map((item, index) => (
@@ -119,7 +119,7 @@ export default function DocsPage() {
               },
               {
                 question: 'What tokens can I deposit?',
-                answer: 'You can deposit USDC, USDT, DAI, and SOMI tokens. All deposits are automatically optimized across Somnia\'s DeFi ecosystem.'
+                answer: 'You can deposit STT tokens. All deposits are automatically optimized across Somnia\'s DeFi ecosystem.'
               },
               {
                 question: 'How often does rebalancing occur?',
