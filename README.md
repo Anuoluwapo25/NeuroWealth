@@ -1,37 +1,37 @@
-# YieldMind 🧠💰
+# NeuroWealth💰
 
 **The Future of DeFi Investing is Here**
 
-YieldMind is like having a professional investment manager working 24/7 to grow your money, but instead of expensive fees and human limitations, it uses advanced AI to automatically find the best investment opportunities across Somnia's blockchain ecosystem.
+NeuroWealth is like having a professional investment manager working 24/7 to grow your money, but instead of expensive fees and human limitations, it uses advanced AI to automatically find the best investment opportunities across Somnia's blockchain ecosystem.
 
-![YieldMind Banner](https://via.placeholder.com/1200x400/1e293b/10b981?text=YieldMind+-+AI-Powered+DeFi+Platform)
+![NeuroWealth Banner](https://via.placeholder.com/1200x400/1e293b/10b981?text=YieldMind+-+AI-Powered+DeFi+Platform)
 
-## 🌟 What is YieldMind?
+## 🌟 What is NeuroWealth?
 
-Think of YieldMind as your personal AI investment advisor that never sleeps. Instead of you having to research dozens of different investment opportunities, track market changes, and constantly rebalance your portfolio, YieldMind does all of this automatically using artificial intelligence.
+Think of NeuroWealth as your personal AI investment advisor that never sleeps. Instead of you having to research dozens of different investment opportunities, track market changes, and constantly rebalance your portfolio, NeuroWealth does all of this automatically using artificial intelligence.
 
 **In Simple Terms:**
-- You deposit your STT tokens (like putting money in a savings account)
-- Our AI finds the best investment opportunities across Somnia's ecosystem
+- You deposit your tokens (like putting money in a savings account)
+- Our AI finds the best investment opportunities across Base ecosystem
 - Your money automatically gets invested in the most profitable and safest options
 - You earn higher returns than traditional savings accounts or manual investing
 - You can withdraw your money anytime with minimal fees
 
-## 🎯 Who is YieldMind For?
+## 🎯 Who is NeuroWealth For?
 
 ### 💼 **Busy Professionals**
 - **Problem**: No time to research investments or manage portfolios
-- **Solution**: YieldMind handles everything automatically while you focus on your career
+- **Solution**: NeuroWealth handles everything automatically while you focus on your career
 - **Benefit**: Earn passive income without the time commitment
 
 ### 🏠 **Savings Account Holders**
 - **Problem**: Traditional banks offer 0.01% interest rates
-- **Solution**: YieldMind offers 16%+ average returns
+- **Solution**: NeuroWealth offers 16%+ average returns
 - **Benefit**: Your money grows 1,600x faster than a regular savings account
 
 ### 📈 **Crypto Beginners**
 - **Problem**: DeFi is complex and risky for newcomers
-- **Solution**: YieldMind's AI manages complexity and reduces risk
+- **Solution**: NeuroWealth's AI manages complexity and reduces risk
 - **Benefit**: Access professional-level returns without needing expertise
 
 ### 💰 **Retirement Planners**
@@ -41,12 +41,12 @@ Think of YieldMind as your personal AI investment advisor that never sleeps. Ins
 
 ### 🎓 **Students & Young Adults**
 - **Problem**: Limited funds but want to start investing early
-- **Solution**: Low minimum deposits (0.1 STT) with high returns
+- **Solution**: Low minimum deposits (0.1 ETH) with high returns
 - **Benefit**: Compound growth from an early age
 
-## 💡 Why Choose YieldMind Over Traditional Options?
+## 💡 Why Choose NeuroWealth Over Traditional Options?
 
-| Traditional Savings | YieldMind |
+| Traditional Savings | NeuroWealth |
 |-------------------|-----------|
 | 0.01% annual interest | 16%+ annual returns |
 | No control over investments | AI finds best opportunities |
@@ -80,25 +80,25 @@ Think of YieldMind as your personal AI investment advisor that never sleeps. Ins
 ### **Example 1: Sarah the Busy Professional**
 - **Situation**: Sarah works 60 hours/week and has $5,000 in savings
 - **Traditional Bank**: $5,000 × 0.01% = $0.50 per year
-- **YieldMind**: $5,000 × 16% = $800 per year
+- **NeuroWealth**: $5,000 × 16% = $800 per year
 - **Result**: Sarah earns $800 annually while focusing on her career
 
 ### **Example 2: Mike the College Student**
 - **Situation**: Mike has $500 from summer job and wants to invest
 - **Traditional Option**: Savings account earning almost nothing
-- **YieldMind**: $500 grows to $580 in first year, $672 in second year
+- **NeuroWealth**: $500 grows to $580 in first year, $672 in second year
 - **Result**: Mike's money compounds while he studies
 
 ### **Example 3: Lisa the Retirement Planner**
 - **Situation**: Lisa wants to grow $50,000 for retirement over 10 years
 - **Traditional Bank**: $50,000 × 0.01% × 10 = $50 total growth
-- **YieldMind**: $50,000 × 16% × 10 = $80,000+ total growth
+- **NeuroWealth**: $50,000 × 16% × 10 = $80,000+ total growth
 - **Result**: Lisa's retirement fund grows 160x more than traditional savings
 
 ## 🎯 Common Questions Answered
 
 ### **"Is this too good to be true?"**
-- YieldMind uses proven DeFi protocols that already offer high returns
+- NeuroWealth uses proven DeFi protocols that already offer high returns
 - Our AI simply finds the best opportunities automatically
 - Traditional banks keep profits for themselves; DeFi shares profits with users
 
@@ -109,13 +109,13 @@ Think of YieldMind as your personal AI investment advisor that never sleeps. Ins
 - You can withdraw anytime
 
 ### **"Do I need to understand crypto?"**
-- No! YieldMind handles all the complexity
-- Just connect your wallet and deposit STT tokens
+- No! NeuroWealth handles all the complexity
+- Just connect your wallet and deposit ETH
 - The AI does all the technical work for you
 
 ### **"How is this different from a bank?"**
 - Banks lend your money to others and keep most profits
-- YieldMind invests your money in high-yield opportunities and shares profits
+- NeuroWealth invests your money in high-yield opportunities and shares profits
 - Banks are limited by regulations; DeFi offers global opportunities
 - Banks have overhead costs; YieldMind is automated and efficient
 
@@ -123,25 +123,25 @@ Think of YieldMind as your personal AI investment advisor that never sleeps. Ins
 
 ### **Free Tier** - Perfect for Getting Started
 - **Who**: First-time users, small investors
-- **Investment**: Up to 10,000 STT tokens
+- **Investment**: Up to 10,000 ETH
 - **Rebalancing**: Every 24 hours (still very good!)
 - **Cost**: Completely free
 
 ### **Premium Tier** - For Serious Investors  
 - **Who**: Regular investors with more funds
-- **Investment**: Up to 100,000 STT tokens
+- **Investment**: Up to 100,000 ETH
 - **Rebalancing**: Every 4 hours (more optimization)
 - **Cost**: Stake 100 MIND tokens (earn them back through higher returns)
 
 ### **Pro Tier** - For Maximum Returns
 - **Who**: Large investors, institutions
-- **Investment**: Up to 1,000,000 STT tokens  
+- **Investment**: Up to 1,000,000 ETH  
 - **Rebalancing**: Every hour (maximum optimization)
 - **Cost**: Stake 500 MIND tokens (premium features pay for themselves)
 
 ### Key Features
 
-- 🤖 **AI-Powered Optimization**: Advanced machine learning algorithms continuously analyze Somnia protocols
+- 🤖 **AI-Powered Optimization**: Advanced machine learning algorithms continuously analyze Base protocols
 - 🎯 **Risk-Adjusted Strategies**: Intelligent risk scoring ensures optimal portfolio allocation
 - ⚡ **Real-Time Rebalancing**: Automatic portfolio rebalancing based on your tier (24h to 1h)
 - 🔒 **Non-Custodial Security**: Your keys, your funds, your control
@@ -172,7 +172,7 @@ Funds are automatically allocated across top-performing protocols based on your 
 
 ## 🏦 Supported Protocols
 
-YieldMind automatically allocates your funds across Somnia's top-performing DeFi protocols:
+NeuroWealth automatically allocates your funds across Base's top-performing DeFi protocols:
 
 - **Somnia Staking** - 15% APY (Very Low Risk)
 - **QuickSwap** - 18% APY (Medium Risk) 
