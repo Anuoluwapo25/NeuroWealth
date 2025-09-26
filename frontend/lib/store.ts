@@ -15,7 +15,7 @@ interface Portfolio {
   }>;
 }
 
-interface YieldMindStore {
+interface NeuroWealthStore {
   portfolio: Portfolio;
   riskLevel: number;
   selectedToken: string;
@@ -30,7 +30,7 @@ interface YieldMindStore {
   updatePortfolio: (portfolio: Portfolio) => void;
 }
 
-export const useYieldMindStore = create<YieldMindStore>((set) => ({
+export const useNeuroWealthStore = create<NeuroWealthStore>((set) => ({
   portfolio: {
     totalValue: 0,
     allocations: [],

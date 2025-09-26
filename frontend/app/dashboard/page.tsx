@@ -13,13 +13,13 @@ import { PortfolioPie } from '@/components/charts/portfolio-pie';
 import { PerformanceChart } from '@/components/charts/performance-chart';
 import { RebalanceHistory } from '@/components/dashboard/rebalance-history';
 import { AIInsights } from '@/components/dashboard/ai-insights';
-import { useYieldMindStore } from '@/lib/store';
+import { useNeuroWealthStore } from '@/lib/store';
 
 import { 
   checkWalletConnection, 
   getSTTBalance, 
   checkContractState,
-  getYieldMindVaultContract,
+  getNeuroWealthVaultContract,
   claimRewards,
   getPendingRewards
 } from '@/lib/ethers-provider';
@@ -27,7 +27,7 @@ import Link from 'next/link';
 import toast from 'react-hot-toast';
 
 export default function DashboardPage() {
-  const { portfolio, isLoading, setLoading, updatePortfolio } = useYieldMindStore();
+  const { portfolio, isLoading, setLoading, updatePortfolio } = useNeuroWealthStore();
   const [refreshing, setRefreshing] = useState(false);
   const [walletConnection, setWalletConnection] = useState({
     isConnected: false,
@@ -100,7 +100,7 @@ export default function DashboardPage() {
         setContractState(contractData);
 
         // Load user position from contract
-        const vault = await getYieldMindVaultContract();
+        const vault = await getNeuroWealthVaultContract();
         const position = await vault.userPositions(connection.address);
         setUserPosition({
           principal: position.principal.toString(),
@@ -125,8 +125,8 @@ export default function DashboardPage() {
           totalValue: parseFloat(position.currentValue.toString()) / 1e18,
           allocations: [
             { 
-              chain: 'Somnia',
-              protocol: 'SomniaYield Protocol', 
+              chain: 'DeFi',
+              protocol: 'Yield Protocol', 
               amount: parseFloat(position.currentValue.toString()) / 1e18,
               apy: 15.2,
               color: '#10b981'
@@ -166,7 +166,7 @@ export default function DashboardPage() {
         const contractData = await checkContractState(connection.address);
         setContractState(contractData);
 
-        const vault = await getYieldMindVaultContract();
+        const vault = await getNeuroWealthVaultContract();
         const position = await vault.userPositions(connection.address);
         setUserPosition({
           principal: position.principal.toString(),
@@ -186,8 +186,8 @@ export default function DashboardPage() {
           totalValue: parseFloat(position.currentValue.toString()) / 1e18,
           allocations: [
             { 
-              chain: 'Somnia',
-              protocol: 'SomniaYield Protocol', 
+              chain: 'DeFi',
+              protocol: 'Yield Protocol', 
               amount: parseFloat(position.currentValue.toString()) / 1e18,
               apy: 12.5, // Mock APY for now
               color: '#10b981'
@@ -264,8 +264,8 @@ export default function DashboardPage() {
     totalValue: currentValue,
     allocations: [
       { 
-        chain: 'Somnia',
-        protocol: 'SomniaYield Protocol', 
+        chain: 'DeFi',
+        protocol: 'Yield Protocol', 
         amount: currentValue,
         apy: 12.5, // Mock APY for now
         color: '#10b981'
@@ -281,8 +281,8 @@ export default function DashboardPage() {
   const aiInsights = [
     {
       type: 'opportunity' as const,
-      title: '15% APY Active on Somnia',
-      description: 'Your funds are earning 15% APY through SomniaYield Protocol. This is a great yield for testnet!',
+      title: '15% APY Active',
+      description: 'Your funds are earning 15% APY through Yield Protocol. This is a great yield!',
       impact: `+${(totalReturns * 0.15).toFixed(4)} STT daily`,
       confidence: 95,
     },
@@ -296,7 +296,7 @@ export default function DashboardPage() {
     {
       type: 'optimization' as const,
       title: 'Platform Status',
-      description: 'SomniaYield Protocol is working perfectly. Your funds are safe and earning rewards.',
+      description: 'Yield Protocol is working perfectly. Your funds are safe and earning rewards.',
       impact: '100% uptime',
       confidence: 100,
     },
@@ -318,7 +318,7 @@ export default function DashboardPage() {
                 Portfolio Dashboard
               </h1>
               <p className="text-gray-300">
-                AI-optimized yield farming on Somnia Testnet
+                AI-optimized yield farming on DeFi protocols
               </p>
               {walletConnection.address && (
                 <p className="text-sm text-gray-400 mt-1">

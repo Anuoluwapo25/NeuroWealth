@@ -61,7 +61,7 @@ const PLATFORM_STATS = [
   {
     title: 'Total Value Locked',
     value: '0.9914 STT',
-    description: 'Real funds secured on Somnia',
+    description: 'Real funds secured on blockchain',
     color: 'text-blue-400',
     icon: Activity,
   },
@@ -81,7 +81,7 @@ const PLATFORM_STATS = [
   },
   {
     title: 'Network',
-    value: 'Somnia',
+    value: 'Blockchain',
     description: 'Testnet deployment',
     color: 'text-yellow-400',
     icon: Globe,
@@ -93,7 +93,7 @@ const TECHNICAL_SPECS = [
     category: 'Smart Contracts',
     items: [
       'SimplifiedVault - Core vault contract',
-      'SomniaYield Protocol - 15% APY protocol',
+      'Yield Protocol - 15% APY protocol',
       'MindStaking Protocol - User tier management',
       'OpenZeppelin security standards',
       'ReentrancyGuard protection',
@@ -114,7 +114,7 @@ const TECHNICAL_SPECS = [
   {
     category: 'Blockchain Integration',
     items: [
-      'Somnia Testnet deployment',
+      'Blockchain deployment',
       'MetaMask wallet connection',
       'Gas estimation & optimization',
       'Transaction monitoring',
@@ -146,11 +146,11 @@ export default function PremiumPage() {
             </div>
             
             <h1 className="font-space-grotesk text-5xl font-bold text-white mb-4">
-              YieldMind <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">Platform</span>
+              NeuroWealth <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">Platform</span>
             </h1>
             
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Professional DeFi platform on Somnia Testnet with real yield generation, advanced analytics, 
+              Professional DeFi platform with real yield generation, advanced analytics, 
               secure smart contracts, and comprehensive portfolio management
             </p>
           </div>
@@ -261,7 +261,7 @@ export default function PremiumPage() {
                 Ready to Start Earning?
               </h2>
               <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
-                Join YieldMind and start earning 15% APY on your STT tokens. 
+                Join NeuroWealth and start earning 15% APY on your STT tokens. 
                 Professional DeFi platform with real yield generation and advanced analytics.
               </p>
               
@@ -284,7 +284,7 @@ export default function PremiumPage() {
         {/* Platform Benefits */}
         <div className="mt-12">
           <h2 className="font-space-grotesk text-3xl font-bold text-white text-center mb-8">
-            Why Choose <span className="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">YieldMind</span>?
+            Why Choose <span className="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">NeuroWealth</span>?
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -304,7 +304,7 @@ export default function PremiumPage() {
                   <TrendingUp className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="font-space-grotesk text-lg font-bold text-white mb-2">Profitable</h3>
-                <p className="text-gray-400 text-sm">15% APY with real yield generation on Somnia Testnet</p>
+                <p className="text-gray-400 text-sm">15% APY with real yield generation on blockchain</p>
               </div>
             </GlowCard>
             

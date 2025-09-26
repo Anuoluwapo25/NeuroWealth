@@ -9,8 +9,8 @@ export default function DocsPage() {
     {
       icon: BookOpen,
       title: 'Getting Started',
-      description: 'Learn the basics of YieldMind and how to start earning',
-      topics: ['Introduction to YieldMind', 'Wallet Setup', 'First Deposit', 'Understanding Tiers']
+      description: 'Learn the basics of NeuroWealth and how to start earning',
+      topics: ['Introduction to NeuroWealth', 'Wallet Setup', 'First Deposit', 'Understanding Tiers']
     },
     {
       icon: Zap,
@@ -54,7 +54,7 @@ export default function DocsPage() {
             <span className="bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">Documentation</span>
           </h1>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Everything you need to know about YieldMind&apos;s AI-powered DeFi platform
+            Everything you need to know about NeuroWealth&apos;s AI-powered DeFi platform
           </p>
         </div>
 
@@ -88,7 +88,7 @@ export default function DocsPage() {
             
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               {[
-                { step: '1', title: 'Connect Wallet', desc: 'Connect your wallet to Somnia network' },
+                { step: '1', title: 'Connect Wallet', desc: 'Connect your wallet to DeFi network' },
                 { step: '2', title: 'Deposit Funds', desc: 'Deposit  STT tokens' },
                 { step: '3', title: 'Stake MIND', desc: 'Optional: Stake MIND for premium features' },
                 { step: '4', title: 'Earn Rewards', desc: 'Watch your portfolio grow automatically' },
@@ -114,24 +114,24 @@ export default function DocsPage() {
           <div className="space-y-6">
             {[
               {
-                question: 'How does YieldMind\'s AI work?',
-                answer: 'Our AI continuously monitors Somnia protocols, analyzing APY, risk scores, and TVL to identify optimal opportunities. It uses a proprietary risk-adjusted scoring formula to allocate funds across the best-performing protocols.'
+                question: 'How does NeuroWealth\'s AI work?',
+                answer: 'Our AI continuously monitors DeFi protocols, analyzing APY, risk scores, and TVL to identify optimal opportunities. It uses a proprietary risk-adjusted scoring formula to allocate funds across the best-performing protocols.'
               },
               {
                 question: 'What tokens can I deposit?',
-                answer: 'You can deposit STT tokens. All deposits are automatically optimized across Somnia\'s DeFi ecosystem.'
+                answer: 'You can deposit STT tokens. All deposits are automatically optimized across DeFi protocols.'
               },
               {
                 question: 'How often does rebalancing occur?',
                 answer: 'Rebalancing frequency depends on your tier: Free (24 hours), Premium (4 hours), Pro (1 hour). Higher tiers get more frequent optimization for better returns.'
               },
               {
-                question: 'Is YieldMind secure?',
-                answer: 'Yes, YieldMind is non-custodial, meaning you maintain control of your funds. Our smart contracts are audited and open-source for transparency.'
+                question: 'Is NeuroWealth secure?',
+                answer: 'Yes, NeuroWealth is non-custodial, meaning you maintain control of your funds. Our smart contracts are audited and open-source for transparency.'
               },
               {
                 question: 'What are the fees?',
-                answer: 'YieldMind charges a 0.5% performance fee only on profits earned. There are no deposit or withdrawal fees.'
+                answer: 'NeuroWealth charges a 0.5% performance fee only on profits earned. There are no deposit or withdrawal fees.'
               }
             ].map((faq, index) => (
               <GlowCard key={index} className="p-6">

@@ -1,6 +1,6 @@
-# YieldMind Contract ABIs
+# NeuroWealth Contract ABIs
 
-This folder contains all the smart contract ABIs (Application Binary Interfaces) for the YieldMind protocol.
+This folder contains all the smart contract ABIs (Application Binary Interfaces) for the NeuroWealth protocol.
 
 ## Structure
 
@@ -9,7 +9,7 @@ abi/
 ├── index.ts              # Main export file with contract configurations
 ├── mind.ts               # MIND Token ABI
 ├── mind-staking.ts       # MIND Staking ABI
-├── yield-mind-vault.ts   # YieldMind Vault ABI
+├── neuro-wealth-vault.ts   # NeuroWealth Vault ABI
 ├── ai-strategy-manager.ts # AI Strategy Manager ABI
 ├── fee-manager.ts        # Fee Manager ABI
 └── README.md             # This file
@@ -22,7 +22,7 @@ abi/
 | MIND Token | `0x9b39Fb4c93d80dF3E91a0369c5B6599Cf80873A4` | ✅ Deployed |
 | MIND Staking | `0xA4Dc2B96Eef1D5189260eb4a7e53C482C439d1b4` | ✅ Deployed |
 | AI Strategy Manager | `0xbe00F9a79aC39CD3FC8802bA1BF94Eae98C9d3f5` | ✅ Deployed |
-| YieldMind Vault | `0xD2D2cE855a37FB1FbbF131D869f3c17847B952F9` | ✅ Deployed |
+| NeuroWealth Vault | `0xD2D2cE855a37FB1FbbF131D869f3c17847B952F9` | ✅ Deployed |
 | Fee Manager | `0x0000000000000000000000000000000000000000` | ⏳ Not Deployed |
 
 ## Usage
@@ -93,7 +93,7 @@ const stakingInfo = await getStakingInfo('0x...', provider);
 - `claimRewards()` - Claim staking rewards
 - `getUserStakeInfo(address)` - Get user staking info
 
-### YieldMind Vault
+### NeuroWealth Vault
 - `deposit(token, amount)` - Deposit tokens
 - `withdraw(amount)` - Withdraw from vault
 - `getUserPosition(address)` - Get user position
@@ -117,7 +117,7 @@ Update your `.env.local` file with the deployed contract addresses:
 NEXT_PUBLIC_MIND_TOKEN_ADDRESS=0x9b39Fb4c93d80dF3E91a0369c5B6599Cf80873A4
 NEXT_PUBLIC_MIND_STAKING_ADDRESS=0xA4Dc2B96Eef1D5189260eb4a7e53C482C439d1b4
 NEXT_PUBLIC_AI_STRATEGY_MANAGER_ADDRESS=0xbe00F9a79aC39CD3FC8802bA1BF94Eae98C9d3f5
-NEXT_PUBLIC_YIELD_MIND_VAULT_ADDRESS=0xD2D2cE855a37FB1FbbF131D869f3c17847B952F9
+NEXT_PUBLIC_NEURO_WEALTH_VAULT_ADDRESS=0xD2D2cE855a37FB1FbbF131D869f3c17847B952F9
 NEXT_PUBLIC_FEE_MANAGER_ADDRESS=0x0000000000000000000000000000000000000000
 ```
 

@@ -1,29 +1,29 @@
 import { ethers } from 'ethers';
-import { YieldMindVaultContract } from '@/abi';
+import { NeuroWealthVaultContract } from '@/abi';
 
-// Somnia Testnet configuration
-export const SOMNIA_CONFIG = {
+// Network configuration
+export const NETWORK_CONFIG = {
   chainId: 50312,
-  name: 'Somnia Testnet',
+  name: 'Testnet',
   rpcUrls: [
-    'https://dream-rpc.somnia.network',
-    'https://testnet-rpc.somnia.network',
-    'https://rpc.somnia.network'
+    'https://dream-rpc.network',
+    'https://testnet-rpc.network',
+    'https://rpc.network'
   ],
   nativeCurrency: {
     name: 'STT',
     symbol: 'STT',
     decimals: 18,
   },
-  blockExplorer: 'https://explorer.somnia.network'
+  blockExplorer: 'https://explorer.network'
 };
 
 // Create ethers provider with fallback RPCs
 export const createEthersProvider = () => {
-  const providers = SOMNIA_CONFIG.rpcUrls.map(url => 
+  const providers = NETWORK_CONFIG.rpcUrls.map(url => 
     new ethers.JsonRpcProvider(url, {
-      chainId: SOMNIA_CONFIG.chainId,
-      name: SOMNIA_CONFIG.name,
+      chainId: NETWORK_CONFIG.chainId,
+      name: NETWORK_CONFIG.name,
     })
   );
   
@@ -47,19 +47,19 @@ export const createEthersSigner = async () => {
   
   // Verify we're on the correct network
   const network = await provider.getNetwork();
-  if (Number(network.chainId) !== SOMNIA_CONFIG.chainId) {
-    throw new Error(`Please switch to Somnia Testnet (Chain ID: ${SOMNIA_CONFIG.chainId})`);
+  if (Number(network.chainId) !== NETWORK_CONFIG.chainId) {
+    throw new Error(`Please switch to Testnet (Chain ID: ${NETWORK_CONFIG.chainId})`);
   }
   
   return signer;
 };
 
 // Get contract instance with ethers
-export const getYieldMindVaultContract = async () => {
+export const getNeuroWealthVaultContract = async () => {
   const signer = await createEthersSigner();
   return new ethers.Contract(
-    YieldMindVaultContract.address,
-    YieldMindVaultContract.abi,
+    NeuroWealthVaultContract.address,
+    NeuroWealthVaultContract.abi,
     signer
   );
 };
@@ -67,7 +67,7 @@ export const getYieldMindVaultContract = async () => {
 // Estimate gas with proper error handling
 export const estimateDepositGas = async (amount: string) => {
   try {
-    const contract = await getYieldMindVaultContract();
+    const contract = await getNeuroWealthVaultContract();
     const amountWei = ethers.parseEther(amount);
     
     // Estimate gas for deposit function
@@ -89,7 +89,7 @@ export const estimateDepositGas = async (amount: string) => {
 // Check contract state before deposit
 export const checkContractState = async (userAddress: string) => {
   try {
-    const contract = await getYieldMindVaultContract();
+    const contract = await getNeuroWealthVaultContract();
     
     console.log('🔍 Ethers Debug: Checking contract state...');
     
@@ -164,7 +164,7 @@ export const executeDeposit = async (amount: string) => {
     // Check contract state first
     await checkContractState(userAddress);
     
-    const contract = await getYieldMindVaultContract();
+    const contract = await getNeuroWealthVaultContract();
     const amountWei = ethers.parseEther(amount);
     
     // Estimate gas first
@@ -228,7 +228,7 @@ export const checkWalletConnection = async () => {
       isConnected: true,
       address,
       chainId: Number(network.chainId),
-      isCorrectNetwork: Number(network.chainId) === SOMNIA_CONFIG.chainId
+      isCorrectNetwork: Number(network.chainId) === NETWORK_CONFIG.chainId
     };
   } catch (error: any) {
     return {
@@ -250,7 +250,7 @@ export const executeWithdrawal = async (amount: string) => {
     // Check contract state first
     await checkContractState(userAddress);
     
-    const contract = await getYieldMindVaultContract();
+    const contract = await getNeuroWealthVaultContract();
     const amountWei = ethers.parseEther(amount);
     
     // Estimate gas first
@@ -292,7 +292,7 @@ export const executeWithdrawal = async (amount: string) => {
 // Estimate gas for withdrawal
 export const estimateWithdrawalGas = async (amount: string) => {
   try {
-    const contract = await getYieldMindVaultContract();
+    const contract = await getNeuroWealthVaultContract();
     const amountWei = ethers.parseEther(amount);
     
     // Estimate gas for withdrawal function
@@ -312,7 +312,7 @@ export const estimateWithdrawalGas = async (amount: string) => {
 // Get user position from vault
 export const getUserPosition = async (userAddress: string) => {
   try {
-    const contract = await getYieldMindVaultContract();
+    const contract = await getNeuroWealthVaultContract();
     const position = await contract.userPositions(userAddress);
     
     return {
@@ -335,7 +335,7 @@ export const getUserPosition = async (userAddress: string) => {
 // Claim rewards from vault (simplified version)
 export const claimRewards = async () => {
   try {
-    const contract = await getYieldMindVaultContract();
+    const contract = await getNeuroWealthVaultContract();
     
     console.log('🔍 Ethers Debug: Claiming rewards...');
     
@@ -373,7 +373,7 @@ export const claimRewards = async () => {
 // Get pending rewards for user (simplified version)
 export const getPendingRewards = async (userAddress: string) => {
   try {
-    const contract = await getYieldMindVaultContract();
+    const contract = await getNeuroWealthVaultContract();
     const position = await contract.userPositions(userAddress);
     
     // Calculate simulated pending rewards (15% APY)
@@ -395,8 +395,8 @@ export const getPendingRewards = async (userAddress: string) => {
   }
 };
 
-// Switch to Somnia Testnet
-export const switchToSomniaTestnet = async () => {
+// Switch to Testnet
+export const switchToTestnet = async () => {
   if (typeof window === 'undefined' || !window.ethereum) {
     throw new Error('MetaMask not detected');
   }
@@ -404,7 +404,7 @@ export const switchToSomniaTestnet = async () => {
   try {
     await window.ethereum.request({
       method: 'wallet_switchEthereumChain',
-      params: [{ chainId: `0x${SOMNIA_CONFIG.chainId.toString(16)}` }],
+      params: [{ chainId: `0x${NETWORK_CONFIG.chainId.toString(16)}` }],
     });
   } catch (switchError: any) {
     // If the network doesn't exist, add it
@@ -413,11 +413,11 @@ export const switchToSomniaTestnet = async () => {
         method: 'wallet_addEthereumChain',
         params: [
           {
-            chainId: `0x${SOMNIA_CONFIG.chainId.toString(16)}`,
-            chainName: SOMNIA_CONFIG.name,
-            rpcUrls: SOMNIA_CONFIG.rpcUrls,
-            nativeCurrency: SOMNIA_CONFIG.nativeCurrency,
-            blockExplorerUrls: [SOMNIA_CONFIG.blockExplorer],
+            chainId: `0x${NETWORK_CONFIG.chainId.toString(16)}`,
+            chainName: NETWORK_CONFIG.name,
+            rpcUrls: NETWORK_CONFIG.rpcUrls,
+            nativeCurrency: NETWORK_CONFIG.nativeCurrency,
+            blockExplorerUrls: [NETWORK_CONFIG.blockExplorer],
           },
         ],
       });
