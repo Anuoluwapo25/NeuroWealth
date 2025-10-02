@@ -1,19 +1,18 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
  * @title MockMindStaking
  * @dev Mock contract that simulates MindStaking functionality for testing
- * This provides the getUserTier function that YieldMindVault expects
+ * This provides the getUserTier function that NeuroWealthVault expects
  */
 contract MockMindStaking is Ownable {
-    
     // Events
     event UserTierSet(address indexed user, uint8 tier);
     event StakingAmountSet(address indexed user, uint256 amount);
-    
+
     // User staking data
     struct UserStakingData {
         uint256 stakedAmount;
@@ -21,23 +20,23 @@ contract MockMindStaking is Ownable {
         uint256 lastStakeTime;
         bool isActive;
     }
-    
+
     mapping(address => UserStakingData) public userStakingData;
-    
+
     // Tier requirements (in MIND tokens)
-    uint256 public constant FREE_TIER_MIN = 0;           // 0 MIND
-    uint256 public constant PREMIUM_TIER_MIN = 1000;     // 1000 MIND
-    uint256 public constant PRO_TIER_MIN = 10000;        // 10000 MIND
-    
+    uint256 public constant FREE_TIER_MIN = 0; // 0 MIND
+    uint256 public constant PREMIUM_TIER_MIN = 1000; // 1000 MIND
+    uint256 public constant PRO_TIER_MIN = 10000; // 10000 MIND
+
     // Tier limits
-    uint256 public constant FREE_TIER_LIMIT = 10000 * 1e18;      // $10k max
-    uint256 public constant PREMIUM_TIER_LIMIT = 100000 * 1e18;  // $100k max
-    uint256 public constant PRO_TIER_LIMIT = 1000000 * 1e18;     // $1M max
-    
+    uint256 public constant FREE_TIER_LIMIT = 10000 * 1e18; // $10k max
+    uint256 public constant PREMIUM_TIER_LIMIT = 100000 * 1e18; // $100k max
+    uint256 public constant PRO_TIER_LIMIT = 1000000 * 1e18; // $1M max
+
     constructor() Ownable(msg.sender) {
         // Initialize with default values
     }
-    
+
     /**
      * @dev Get user tier based on staked amount
      * @param user User address
@@ -45,11 +44,11 @@ contract MockMindStaking is Ownable {
      */
     function getUserTier(address user) external view returns (uint8) {
         UserStakingData memory userData = userStakingData[user];
-        
+
         if (!userData.isActive) {
             return 0; // Default to Free tier
         }
-        
+
         if (userData.stakedAmount >= PRO_TIER_MIN) {
             return 2; // Pro tier
         } else if (userData.stakedAmount >= PREMIUM_TIER_MIN) {
@@ -58,7 +57,7 @@ contract MockMindStaking is Ownable {
             return 0; // Free tier
         }
     }
-    
+
     /**
      * @dev Get user staking data
      * @param user User address
@@ -67,12 +66,18 @@ contract MockMindStaking is Ownable {
      * @return lastStakeTime Last stake timestamp
      * @return isActive Whether user is active
      */
-    function getUserStakingData(address user) external view returns (
-        uint256 stakedAmount,
-        uint8 tier,
-        uint256 lastStakeTime,
-        bool isActive
-    ) {
+    function getUserStakingData(
+        address user
+    )
+        external
+        view
+        returns (
+            uint256 stakedAmount,
+            uint8 tier,
+            uint256 lastStakeTime,
+            bool isActive
+        )
+    {
         UserStakingData memory userData = userStakingData[user];
         return (
             userData.stakedAmount,
@@ -81,7 +86,7 @@ contract MockMindStaking is Ownable {
             userData.isActive
         );
     }
-    
+
     /**
      * @dev Set user tier (for testing)
      * @param user User address
@@ -89,10 +94,10 @@ contract MockMindStaking is Ownable {
      */
     function setUserTier(address user, uint8 tier) external onlyOwner {
         require(tier <= 2, "Invalid tier");
-        
+
         userStakingData[user].tier = tier;
         userStakingData[user].isActive = true;
-        
+
         // Set staked amount based on tier
         if (tier == 2) {
             userStakingData[user].stakedAmount = PRO_TIER_MIN;
@@ -101,22 +106,25 @@ contract MockMindStaking is Ownable {
         } else {
             userStakingData[user].stakedAmount = FREE_TIER_MIN;
         }
-        
+
         userStakingData[user].lastStakeTime = block.timestamp;
-        
+
         emit UserTierSet(user, tier);
     }
-    
+
     /**
      * @dev Set user staking amount (for testing)
      * @param user User address
      * @param amount Amount to stake
      */
-    function setUserStakingAmount(address user, uint256 amount) external onlyOwner {
+    function setUserStakingAmount(
+        address user,
+        uint256 amount
+    ) external onlyOwner {
         userStakingData[user].stakedAmount = amount;
         userStakingData[user].isActive = true;
         userStakingData[user].lastStakeTime = block.timestamp;
-        
+
         // Update tier based on amount
         if (amount >= PRO_TIER_MIN) {
             userStakingData[user].tier = 2;
@@ -125,10 +133,10 @@ contract MockMindStaking is Ownable {
         } else {
             userStakingData[user].tier = 0;
         }
-        
+
         emit StakingAmountSet(user, amount);
     }
-    
+
     /**
      * @dev Get tier limit for a given tier
      * @param tier Tier (0=Free, 1=Premium, 2=Pro)
@@ -143,7 +151,7 @@ contract MockMindStaking is Ownable {
             return FREE_TIER_LIMIT;
         }
     }
-    
+
     /**
      * @dev Check if user can deposit amount
      * @param user User address
@@ -151,17 +159,20 @@ contract MockMindStaking is Ownable {
      * @return canDeposit Whether user can deposit
      * @return reason Reason if cannot deposit
      */
-    function canUserDeposit(address user, uint256 amount) external view returns (bool canDeposit, string memory reason) {
+    function canUserDeposit(
+        address user,
+        uint256 amount
+    ) external view returns (bool canDeposit, string memory reason) {
         uint8 tier = this.getUserTier(user);
         uint256 tierLimit = this.getTierLimit(tier);
-        
+
         if (amount > tierLimit) {
             return (false, "Amount exceeds tier limit");
         }
-        
+
         return (true, "Can deposit");
     }
-    
+
     /**
      * @dev Get total staked amount
      * @return total Total staked amount
@@ -171,7 +182,7 @@ contract MockMindStaking is Ownable {
         // For simplicity, return a fixed value
         return 1000000 * 1e18; // 1M MIND staked
     }
-    
+
     /**
      * @dev Get active user count
      * @return count Number of active users

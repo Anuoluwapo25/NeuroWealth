@@ -1,7 +1,7 @@
 {
   "name": "smartcontract",
   "version": "1.0.0",
-  "description": "YieldMind DeFi Protocol Smart Contracts",
+  "description": "NeuroWealth DeFi Protocol Smart Contracts",
   "main": "index.js",
   "scripts": {
     "compile": "hardhat compile",
@@ -27,8 +27,14 @@
     "clean": "hardhat clean",
     "coverage": "hardhat coverage"
   },
-  "keywords": ["defi", "yield", "staking", "crossfi", "ethereum"],
-  "author": "YieldMind Team",
+  "keywords": [
+    "defi",
+    "yield",
+    "staking",
+    "crossfi",
+    "ethereum"
+  ],
+  "author": "NeuroWealth Team",
   "license": "MIT",
   "type": "commonjs",
   "devDependencies": {
