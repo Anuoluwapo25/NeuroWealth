@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+//SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -11,402 +11,519 @@ interface IYieldMindVault {
 }
 
 interface IExternalProtocol {
-    function deposit(address token, uint256 amount) external payable returns (uint256);
+    function deposit(address token, uint256 amount) external returns (uint256);
+
     function withdraw(address token, uint256 amount) external returns (uint256);
-    function getBalance(address user, address token) external view returns (uint256);
+
+    function getBalance(
+        address user,
+        address token
+    ) external view returns (uint256);
 }
 
-interface IAIStrategyManager {
-    function executeStrategy(uint256 amount, address token) external;
-    function rebalancePortfolio(address user) external;
+interface IUniswapV3StrategyAdapter {
+    function depositUSDC(uint256 usdcAmount, address user) external;
+
+    function withdrawUserPosition(address user, uint256 percentage) external;
+
+    function getUserBalance(address user) external view returns (uint256);
+
+    function getEstimatedAPY() external view returns (uint256);
+
+    function collectFees(address user) external;
 }
 
-contract AIStrategyManagerV2 is Ownable, ReentrancyGuard, IAIStrategyManager {
+contract AIStrategyManagerV2 is Ownable, ReentrancyGuard {
     using SafeERC20 for IERC20;
-    
+
     // Events
-    event StrategyExecuted(address indexed user, address indexed token, uint256 amount);
+    event StrategyExecuted(
+        address indexed user,
+        address indexed token,
+        uint256 amount,
+        string protocolName
+    );
+    event ProtocolAdded(
+        address indexed protocol,
+        string name,
+        string protocolType
+    );
     event PortfolioRebalanced(address indexed user, uint256 newValue);
-    event ProtocolAdded(address indexed protocol, string name);
-    event AllocationUpdated(address indexed protocol, uint256 newAllocation);
-    
+
     // Structs
     struct Protocol {
         address protocolAddress;
         string name;
-        uint256 currentAPY;          // APY in basis points (100 = 1%)
-        uint256 riskScore;           // Risk score 1-100 (1=safest)
-        uint256 tvl;                 // Total Value Locked
+        string protocolType; // "uniswap", "compound", "mock", etc.
+        uint256 currentAPY; // APY in basis points (100 = 1%)
+        uint256 riskScore; // Risk score 1-100 (1=safest)
+        uint256 tvl; // Total Value Locked
         bool isActive;
-        uint256 allocation;          // Percentage allocation (basis points)
-        uint256 lastUpdate;          // Last data update timestamp
-        bool supportsNativeToken;    // Whether this protocol supports native tokens
+        uint256 lastUpdate; // Last data update timestamp
     }
-    
+
     struct UserStrategy {
         mapping(address => uint256) protocolAllocations; // protocol => amount
         uint256 totalValue;
         uint256 lastRebalance;
         address depositToken;
+        address selectedProtocol; // Currently selected protocol
     }
-    
-    // State variables
-    IYieldMindVault public immutable yieldMindVault;
-    
+
+    // State variables - FIXED: Removed immutable
+    IYieldMindVault public yieldMindVault;
+    IUniswapV3StrategyAdapter public uniswapAdapter;
+
     mapping(address => Protocol) public protocols;
     address[] public protocolList;
     mapping(address => UserStrategy) public userStrategies;
-    
-    // AI Strategy Parameters
-    uint256 public constant MAX_PROTOCOLS_PER_STRATEGY = 5;
-    uint256 public constant MIN_ALLOCATION_PERCENTAGE = 500; // 5%
-    uint256 public constant REBALANCE_THRESHOLD = 1000; // 10% change triggers rebalance
-    
-    // Oracle settings
-    address public dataOracle;
+
+    // Network configuration
+    address public USDC;
     uint256 public constant DATA_VALIDITY_PERIOD = 1 hours;
-    
+
     modifier onlyVault() {
         require(msg.sender == address(yieldMindVault), "Only vault can call");
         _;
     }
-    
+
     constructor(address _yieldMindVault) Ownable(msg.sender) {
         yieldMindVault = IYieldMindVault(_yieldMindVault);
+        _initializeNetwork();
     }
-    
+
+    /**
+     * @dev Initialize network-specific addresses
+     */
+    function _initializeNetwork() internal {
+        uint256 chainId = block.chainid;
+
+        if (chainId == 8453) {
+            // Base Mainnet
+            USDC = 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913;
+        } else if (chainId == 84532) {
+            // Base Sepolia Testnet
+            USDC = 0x036CbD53842c5426634e7929541eC2318f3dCF7e;
+        } else if (chainId == 31337 || chainId == 1337) {
+            // Local Hardhat - you'll need to deploy mock USDC
+            USDC = 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913;
+        } else {
+            revert("Unsupported network");
+        }
+    }
+
+    // ADDED: Function to update vault address
+    /**
+     * @dev Set vault address (for testing/migration)
+     */
+    function setVault(address _vault) external onlyOwner {
+        require(_vault != address(0), "Invalid vault address");
+        yieldMindVault = IYieldMindVault(_vault);
+    }
+
+    // ADDED: Function with correct name for tests
+    /**
+     * @dev Set USDC address for local testing
+     */
+    function setUSDC(address _usdc) external onlyOwner {
+        USDC = _usdc;
+    }
+
     /**
      * @dev Execute AI-recommended strategy for user deposit
-     * Now supports both ERC20 and native tokens
      */
-    function executeStrategy(uint256 amount, address token) 
-        external 
-        onlyVault 
-        nonReentrant 
-    {
+    function executeStrategy(
+        uint256 amount,
+        address token
+    ) external onlyVault nonReentrant {
+        require(token == USDC || token == address(0), "Only USDC supported");
         address user = tx.origin; // Get original caller (user)
-        
-        // Get optimal allocation from AI engine
-        address[] memory selectedProtocols = _getOptimalProtocols(amount, token);
-        uint256[] memory allocations = _calculateAllocations(selectedProtocols, amount);
-        
+
+        // Get optimal protocol from AI engine
+        address selectedProtocol = _getOptimalProtocol(amount, token);
+        string memory protocolName = protocols[selectedProtocol].name;
+
         UserStrategy storage strategy = userStrategies[user];
         strategy.depositToken = token;
-        
-        // Deploy funds to selected protocols
-        for (uint256 i = 0; i < selectedProtocols.length; i++) {
-            if (allocations[i] > 0) {
-                _deployToProtocol(selectedProtocols[i], token, allocations[i]);
-                strategy.protocolAllocations[selectedProtocols[i]] += allocations[i];
-            }
+        strategy.selectedProtocol = selectedProtocol;
+
+        // Deploy funds to selected protocol
+        if (selectedProtocol != address(0)) {
+            _deployToProtocol(selectedProtocol, token, amount, user);
+            strategy.protocolAllocations[selectedProtocol] += amount;
         }
-        
+
         strategy.totalValue += amount;
         strategy.lastRebalance = block.timestamp;
-        
-        emit StrategyExecuted(user, token, amount);
+
+        emit StrategyExecuted(user, token, amount, protocolName);
     }
-    
+
     /**
-     * @dev Rebalance user's portfolio based on new AI recommendations
+     * @dev Get optimal protocol based on AI analysis
      */
-    function rebalancePortfolio(address user) external onlyVault nonReentrant {
-        UserStrategy storage strategy = userStrategies[user];
-        require(strategy.totalValue > 0, "No position to rebalance");
-        
-        // Calculate current portfolio value
-        uint256 currentValue = _calculatePortfolioValue(user);
-        
-        // Get new optimal allocation
-        address[] memory newProtocols = _getOptimalProtocols(currentValue, strategy.depositToken);
-        uint256[] memory newAllocations = _calculateAllocations(newProtocols, currentValue);
-        
-        // Withdraw from underweight protocols
-        _withdrawFromUnderweightProtocols(user, newProtocols, newAllocations);
-        
-        // Deploy to new/overweight protocols
-        _deployToOptimalProtocols(user, newProtocols, newAllocations);
-        
-        // Update portfolio value
-        strategy.totalValue = currentValue;
-        strategy.lastRebalance = block.timestamp;
-        
-        // Update vault with new value
-        yieldMindVault.updatePositionValue(user, currentValue);
-        
-        emit PortfolioRebalanced(user, currentValue);
-    }
-    
-    /**
-     * @dev Get optimal protocols based on AI analysis
-     * Enhanced to handle native tokens
-     */
-    function _getOptimalProtocols(uint256 amount, address token) 
-        internal 
-        view 
-        returns (address[] memory) 
-    {
-        // Simplified AI logic: select top 3 protocols by risk-adjusted yield
-        address[] memory optimal = new address[](3);
-        uint256[] memory scores = new uint256[](3);
-        
+    function _getOptimalProtocol(
+        uint256 amount,
+        address token
+    ) internal view returns (address) {
+        address bestProtocol = address(0);
+        uint256 bestScore = 0;
+
         for (uint256 i = 0; i < protocolList.length; i++) {
             address protocolAddr = protocolList[i];
             Protocol memory protocol = protocols[protocolAddr];
-            
-            // Skip inactive protocols or protocols with stale data
-            if (!protocol.isActive || 
-                block.timestamp > protocol.lastUpdate + DATA_VALIDITY_PERIOD) {
+
+            if (
+                !protocol.isActive ||
+                block.timestamp > protocol.lastUpdate + DATA_VALIDITY_PERIOD
+            ) {
                 continue;
             }
-            
-            // Skip protocols that don't support the token type
-            if (token == address(0) && !protocol.supportsNativeToken) {
-                continue;
-            }
-            if (token != address(0) && protocol.supportsNativeToken) {
-                continue;
-            }
-            
+
             // Risk-adjusted score: APY / sqrt(riskScore)
-            uint256 score = (protocol.currentAPY * 100) / _sqrt(protocol.riskScore);
-            
-            // Insert into top 3
-            for (uint256 j = 0; j < 3; j++) {
-                if (score > scores[j]) {
-                    // Shift lower scores
-                    for (uint256 k = 2; k > j; k--) {
-                        scores[k] = scores[k-1];
-                        optimal[k] = optimal[k-1];
-                    }
-                    scores[j] = score;
-                    optimal[j] = protocolAddr;
-                    break;
-                }
+            uint256 score = (protocol.currentAPY * 100) /
+                _sqrt(protocol.riskScore);
+
+            // Bonus for Uniswap (more proven, available on testnet)
+            if (
+                keccak256(bytes(protocol.protocolType)) ==
+                keccak256(bytes("uniswap"))
+            ) {
+                score = (score * 110) / 100; // 10% bonus
+            }
+
+            if (score > bestScore) {
+                bestScore = score;
+                bestProtocol = protocolAddr;
             }
         }
-        
-        return optimal;
+
+        return bestProtocol;
     }
-    
-    /**
-     * @dev Calculate allocation percentages for selected protocols
-     */
-    function _calculateAllocations(address[] memory selectedProtocols, uint256 totalAmount) 
-        internal 
-        view 
-        returns (uint256[] memory) 
-    {
-        uint256[] memory allocations = new uint256[](selectedProtocols.length);
-        
-        // Simplified allocation: distribute based on inverse risk
-        uint256 totalInverseRisk = 0;
-        for (uint256 i = 0; i < selectedProtocols.length; i++) {
-            if (selectedProtocols[i] != address(0)) {
-                totalInverseRisk += 100 - protocols[selectedProtocols[i]].riskScore;
-            }
-        }
-        
-        // If no protocols found, return empty allocations
-        if (totalInverseRisk == 0) {
-            return allocations;
-        }
-        
-        for (uint256 i = 0; i < selectedProtocols.length; i++) {
-            if (selectedProtocols[i] != address(0)) {
-                uint256 inverseRisk = 100 - protocols[selectedProtocols[i]].riskScore;
-                allocations[i] = (totalAmount * inverseRisk) / totalInverseRisk;
-            }
-        }
-        
-        return allocations;
-    }
-    
+
     /**
      * @dev Deploy funds to specific protocol
-     * Enhanced to handle native tokens
      */
-    function _deployToProtocol(address protocol, address token, uint256 amount) internal {
+    function _deployToProtocol(
+        address protocol,
+        address token,
+        uint256 amount,
+        address user
+    ) internal {
         require(protocols[protocol].isActive, "Protocol not active");
-        
-        if (token == address(0)) {
-            // Handle native token deployment
-            require(protocols[protocol].supportsNativeToken, "Protocol doesn't support native tokens");
-            
-            // Send native tokens to protocol
-            (bool success, ) = protocol.call{value: amount}(
-                abi.encodeWithSignature("deposit(address,uint256)", token, amount)
+
+        string memory protocolType = protocols[protocol].protocolType;
+
+        if (keccak256(bytes(protocolType)) == keccak256(bytes("uniswap"))) {
+            // Deploy to Uniswap V3 through adapter
+            require(
+                address(uniswapAdapter) != address(0),
+                "Uniswap adapter not set"
             );
-            require(success, "Native token deployment failed");
+            IERC20(token).safeTransfer(address(uniswapAdapter), amount);
+            uniswapAdapter.depositUSDC(amount, user);
+        } else if (keccak256(bytes(protocolType)) == keccak256(bytes("mock"))) {
+            // Deploy to mock protocol for testing
+            IERC20(token).approve(protocol, amount);
+            IExternalProtocol(protocol).deposit(token, amount);
         } else {
-            // Handle ERC20 token deployment
-            require(!protocols[protocol].supportsNativeToken, "Protocol only supports native tokens");
-            
+            // Deploy to other external protocols
             IERC20(token).approve(protocol, amount);
             IExternalProtocol(protocol).deposit(token, amount);
         }
     }
-    
+
+    /**
+     * @dev Rebalance user's portfolio
+     */
+    function rebalancePortfolio(address user) external onlyVault nonReentrant {
+        UserStrategy storage strategy = userStrategies[user];
+        require(strategy.totalValue > 0, "No position to rebalance");
+
+        // Calculate current portfolio value
+        uint256 currentValue = _calculatePortfolioValue(user);
+
+        // Update portfolio value in vault
+        yieldMindVault.updatePositionValue(user, currentValue);
+
+        strategy.totalValue = currentValue;
+        strategy.lastRebalance = block.timestamp;
+
+        emit PortfolioRebalanced(user, currentValue);
+    }
+
     /**
      * @dev Calculate current portfolio value for user
      */
-    function _calculatePortfolioValue(address user) internal view returns (uint256) {
+    function _calculatePortfolioValue(
+        address user
+    ) internal view returns (uint256) {
         UserStrategy storage strategy = userStrategies[user];
-        uint256 totalValue = 0;
-        
-        for (uint256 i = 0; i < protocolList.length; i++) {
-            address protocol = protocolList[i];
-            uint256 allocation = strategy.protocolAllocations[protocol];
-            
-            if (allocation > 0) {
-                uint256 currentBalance = IExternalProtocol(protocol).getBalance(
-                    address(this), 
+
+        if (strategy.selectedProtocol == address(0)) {
+            return strategy.totalValue;
+        }
+
+        Protocol memory protocol = protocols[strategy.selectedProtocol];
+
+        if (
+            keccak256(bytes(protocol.protocolType)) ==
+            keccak256(bytes("uniswap"))
+        ) {
+            // Get value from Uniswap adapter
+            return uniswapAdapter.getUserBalance(user);
+        } else {
+            // Get value from other protocols
+            return
+                IExternalProtocol(strategy.selectedProtocol).getBalance(
+                    address(this),
                     strategy.depositToken
                 );
-                totalValue += currentBalance;
-            }
         }
-        
-        return totalValue;
     }
-    
+
     /**
-     * @dev Withdraw from underweight protocols
+     * @dev Initialize Uniswap protocol
      */
-    function _withdrawFromUnderweightProtocols(
-        address user,
-        address[] memory newProtocols,
-        uint256[] memory newAllocations
-    ) internal {
-        // Implementation for rebalancing withdrawals
-        // This would compare current vs target allocations
-        // and withdraw excess from overallocated protocols
+    function initializeUniswap(address _uniswapAdapter) external onlyOwner {
+        uniswapAdapter = IUniswapV3StrategyAdapter(_uniswapAdapter);
+
+        addProtocol(
+            _uniswapAdapter,
+            "Uniswap V3 USDC/WETH",
+            "uniswap",
+            1500, // 15% APY
+            20, // Risk score (20 = low risk)
+            1000000000 * 1e6, // TVL (~1B USDC)
+            true // Is active
+        );
     }
-    
+
     /**
-     * @dev Deploy to optimal protocols
+     * @dev Add mock protocol for testing
      */
-    function _deployToOptimalProtocols(
-        address user,
-        address[] memory targetProtocols,
-        uint256[] memory allocations
-    ) internal {
-        // Implementation for rebalancing deposits
-        // This would deploy withdrawn funds to underallocated protocols
+    function addMockProtocol(
+        address protocolAddress,
+        string memory name,
+        uint256 apy,
+        uint256 riskScore
+    ) external onlyOwner {
+        addProtocol(
+            protocolAddress,
+            name,
+            "mock",
+            apy,
+            riskScore,
+            100000 * 1e6,
+            true
+        );
     }
-    
+
     /**
      * @dev Add new protocol to strategy options
-     * Enhanced to specify token support
      */
     function addProtocol(
         address protocolAddress,
         string memory name,
+        string memory protocolType,
         uint256 initialAPY,
         uint256 riskScore,
         uint256 tvl,
-        bool supportsNativeToken
-    ) external onlyOwner {
+        bool isActive
+    ) public onlyOwner {
         require(protocolAddress != address(0), "Invalid protocol address");
         require(riskScore <= 100, "Risk score must be <= 100");
-        
+        require(bytes(protocolType).length > 0, "Protocol type required");
+
         protocols[protocolAddress] = Protocol({
             protocolAddress: protocolAddress,
             name: name,
+            protocolType: protocolType,
             currentAPY: initialAPY,
             riskScore: riskScore,
             tvl: tvl,
-            isActive: true,
-            allocation: 0,
-            lastUpdate: block.timestamp,
-            supportsNativeToken: supportsNativeToken
+            isActive: isActive,
+            lastUpdate: block.timestamp
         });
-        
+
         protocolList.push(protocolAddress);
-        
-        emit ProtocolAdded(protocolAddress, name);
+
+        emit ProtocolAdded(protocolAddress, name, protocolType);
     }
-    
+
     /**
-     * @dev Update protocol data (called by oracle)
+     * @dev Update protocol data
      */
     function updateProtocolData(
         address protocol,
         uint256 newAPY,
         uint256 newRiskScore,
         uint256 newTVL
-    ) external {
-        require(msg.sender == dataOracle || msg.sender == owner(), "Unauthorized");
-        require(protocols[protocol].protocolAddress != address(0), "Protocol not found");
-        
+    ) external onlyOwner {
+        require(
+            protocols[protocol].protocolAddress != address(0),
+            "Protocol not found"
+        );
+
         Protocol storage p = protocols[protocol];
         p.currentAPY = newAPY;
         p.riskScore = newRiskScore;
         p.tvl = newTVL;
         p.lastUpdate = block.timestamp;
     }
-    
+
     /**
-     * @dev Set data oracle address
+     * @dev Withdraw user funds from protocol
      */
-    function setDataOracle(address _oracle) external onlyOwner {
-        dataOracle = _oracle;
+    function withdrawFromProtocol(
+        address user,
+        uint256 percentage
+    ) external onlyVault nonReentrant {
+        require(percentage > 0 && percentage <= 100, "Invalid percentage");
+
+        UserStrategy storage strategy = userStrategies[user];
+        require(
+            strategy.selectedProtocol != address(0),
+            "No protocol selected"
+        );
+
+        Protocol memory protocol = protocols[strategy.selectedProtocol];
+
+        if (
+            keccak256(bytes(protocol.protocolType)) ==
+            keccak256(bytes("uniswap"))
+        ) {
+            // Withdraw from Uniswap adapter
+            uniswapAdapter.withdrawUserPosition(user, percentage);
+        } else {
+            // Withdraw from other protocols
+            uint256 withdrawAmount = (strategy.protocolAllocations[
+                strategy.selectedProtocol
+            ] * percentage) / 100;
+            IExternalProtocol(strategy.selectedProtocol).withdraw(
+                strategy.depositToken,
+                withdrawAmount
+            );
+        }
+
+        if (percentage == 100) {
+            // Full withdrawal - reset user strategy
+            strategy.totalValue = 0;
+            strategy.protocolAllocations[strategy.selectedProtocol] = 0;
+            strategy.selectedProtocol = address(0);
+        } else {
+            // Partial withdrawal - update allocations
+            uint256 remainingAllocation = (strategy.protocolAllocations[
+                strategy.selectedProtocol
+            ] * (100 - percentage)) / 100;
+            strategy.protocolAllocations[
+                strategy.selectedProtocol
+            ] = remainingAllocation;
+            strategy.totalValue =
+                (strategy.totalValue * (100 - percentage)) /
+                100;
+        }
     }
-    
+
     /**
-     * @dev Get user's current strategy
+     * @dev Collect fees from Uniswap position
      */
-    function getUserStrategy(address user) 
-        external 
-        view 
+    function collectFeesForUser(address user) external {
+        UserStrategy storage strategy = userStrategies[user];
+
+        if (strategy.selectedProtocol != address(0)) {
+            Protocol memory protocol = protocols[strategy.selectedProtocol];
+
+            if (
+                keccak256(bytes(protocol.protocolType)) ==
+                keccak256(bytes("uniswap"))
+            ) {
+                uniswapAdapter.collectFees(user);
+            }
+        }
+    }
+
+    /**
+     * @dev Get user's current strategy info
+     */
+    function getUserStrategy(
+        address user
+    )
+        external
+        view
         returns (
             uint256 totalValue,
             uint256 lastRebalance,
-            address depositToken
-        ) 
+            address depositToken,
+            address selectedProtocol,
+            string memory protocolName
+        )
     {
         UserStrategy storage strategy = userStrategies[user];
+        string memory name = strategy.selectedProtocol != address(0)
+            ? protocols[strategy.selectedProtocol].name
+            : "";
+
         return (
             strategy.totalValue,
             strategy.lastRebalance,
-            strategy.depositToken
+            strategy.depositToken,
+            strategy.selectedProtocol,
+            name
         );
     }
-    
+
     /**
      * @dev Get protocol information
      */
-    function getProtocolInfo(address protocol) 
-        external 
-        view 
+    function getProtocolInfo(
+        address protocol
+    )
+        external
+        view
         returns (
             address protocolAddress,
             string memory name,
+            string memory protocolType,
             uint256 currentAPY,
             uint256 riskScore,
             uint256 tvl,
             bool isActive,
-            uint256 allocation,
-            uint256 lastUpdate,
-            bool supportsNativeToken
-        ) 
+            uint256 lastUpdate
+        )
     {
         Protocol memory p = protocols[protocol];
         return (
             p.protocolAddress,
             p.name,
+            p.protocolType,
             p.currentAPY,
             p.riskScore,
             p.tvl,
             p.isActive,
-            p.allocation,
-            p.lastUpdate,
-            p.supportsNativeToken
+            p.lastUpdate
         );
     }
-    
+
     /**
-     * @dev Square root function (for risk calculations)
+     * @dev Get all registered protocols
+     */
+    function getAllProtocols() external view returns (address[] memory) {
+        return protocolList;
+    }
+
+    /**
+     * @dev Emergency withdraw function
+     */
+    function emergencyWithdraw(
+        address token,
+        uint256 amount
+    ) external onlyOwner {
+        IERC20(token).safeTransfer(owner(), amount);
+    }
+
+    /**
+     * @dev Square root function for risk calculations
      */
     function _sqrt(uint256 x) internal pure returns (uint256) {
         if (x == 0) return 0;
@@ -417,12 +534,5 @@ contract AIStrategyManagerV2 is Ownable, ReentrancyGuard, IAIStrategyManager {
             z = (x / z + z) / 2;
         }
         return y;
-    }
-    
-    /**
-     * @dev Receive function for native token handling
-     */
-    receive() external payable {
-        // Allow contract to receive native tokens
     }
 }
