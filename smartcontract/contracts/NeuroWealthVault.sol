@@ -132,25 +132,47 @@ contract NeuroWealthVault is ReentrancyGuard, Ownable, Pausable {
         );
 
         // Calculate performance fee on profits only
-        uint256 profitToWithdraw = withdrawAmount > position.principal
-            ? withdrawAmount - position.principal
-            : 0;
+        uint256 profitToWithdraw = 0;
+        if (withdrawAmount > position.principal) {
+            profitToWithdraw = withdrawAmount - position.principal;
+        }
 
         uint256 performanceFee = (profitToWithdraw * PERFORMANCE_FEE) /
             FEE_DENOMINATOR;
         uint256 userReceives = withdrawAmount - performanceFee;
 
+        // Check vault USDC balance and get funds from strategy manager if needed
+        uint256 vaultBalance = USDC.balanceOf(address(this));
+        if (vaultBalance < userReceives) {
+            // In production, you would call strategy manager to withdraw funds
+            // For testing, we'll just revert with a clear message
+            revert("Insufficient vault balance - funds in strategy");
+        }
+
         // Update position
         if (withdrawAmount == position.currentValue) {
             delete userPositions[msg.sender];
         } else {
-            uint256 remainingRatio = ((position.currentValue - withdrawAmount) *
-                1e18) / position.currentValue;
-            position.principal = (position.principal * remainingRatio) / 1e18;
+            // Calculate how much principal and current value remain
+            uint256 withdrawnPrincipal = (position.principal * withdrawAmount) /
+                position.currentValue;
+
+            // Ensure we don't underflow
+            if (withdrawnPrincipal > position.principal) {
+                withdrawnPrincipal = position.principal;
+            }
+
+            position.principal -= withdrawnPrincipal;
             position.currentValue -= withdrawAmount;
         }
 
-        totalValueLocked -= withdrawAmount;
+        // Ensure we don't underflow on TVL
+        if (withdrawAmount > totalValueLocked) {
+            totalValueLocked = 0;
+        } else {
+            totalValueLocked -= withdrawAmount;
+        }
+
         totalFeesCollected += performanceFee;
 
         USDC.safeTransfer(msg.sender, userReceives);
