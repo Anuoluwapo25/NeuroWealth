@@ -7,9 +7,9 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
 // USER POSITION TRACKER INTERFACE
-
 interface IUserPositionTracker {
     function recordPosition(
         address user,
@@ -48,7 +48,6 @@ interface IUserPositionTracker {
 }
 
 // UNISWAP V3 INTERFACES
-
 interface INonfungiblePositionManager is IERC721 {
     struct MintParams {
         address token0;
@@ -160,10 +159,31 @@ interface IUniswapV3Factory {
     ) external view returns (address pool);
 }
 
-// UNISWAP V3 STRATEGY ADAPTER - USER APY
-
-contract UniswapV3StrategyAdapter is ReentrancyGuard, Ownable, IERC721Receiver {
+/**
+ * @title UniswapV3StrategyAdapter with AI Agent & Super Admin Roles
+ * @notice Manages Uniswap V3 positions with role-based access control
+ * @dev Role Hierarchy:
+ *      - SUPER_ADMIN (Deployer): Full control, can grant/revoke AI agents
+ *      - AI_AGENT_ROLE: Can execute deposits, withdrawals, fee collection
+ */
+contract UniswapV3StrategyAdapter is
+    ReentrancyGuard,
+    Ownable,
+    IERC721Receiver,
+    AccessControl
+{
     using SafeERC20 for IERC20;
+
+    // ============================================================================
+    // ROLES - AI AGENT & SUPER ADMIN
+    // ============================================================================
+    
+    bytes32 public constant SUPER_ADMIN = keccak256("SUPER_ADMIN");
+    bytes32 public constant AI_AGENT_ROLE = keccak256("AI_AGENT_ROLE");
+
+    // ============================================================================
+    // STATE VARIABLES
+    // ============================================================================
 
     struct NetworkConfig {
         address positionManager;
@@ -189,13 +209,17 @@ contract UniswapV3StrategyAdapter is ReentrancyGuard, Ownable, IERC721Receiver {
 
     mapping(address => UniswapPosition) public userPositions;
     mapping(uint256 => address) public tokenIdToUser;
-    address public aiStrategyManager;
+    address public aiStrategyManager; // kept for backwards compatibility
 
-    // User APY Tracking ONLY
+    // User APY Tracking
     IUserPositionTracker public positionTracker;
     address public poolAddress;
 
     uint24 public constant MEDIUM_FEE = 3000; // 0.30%
+
+    // ============================================================================
+    // EVENTS
+    // ============================================================================
 
     event UniswapDeposit(
         address indexed user,
@@ -213,63 +237,125 @@ contract UniswapV3StrategyAdapter is ReentrancyGuard, Ownable, IERC721Receiver {
         uint256 amount1,
         uint256 totalUSDC
     );
+    event AIAgentSet(address indexed agent);
+    event AIAgentRevoked(address indexed agent);
+    event AiStrategyManagerUpdated(
+        address indexed oldManager,
+        address indexed newManager
+    );
 
+    // ============================================================================
+    // MODIFIERS
+    // ============================================================================
+
+    /**
+     * @notice Allows strategy manager OR AI agents OR super admin
+     * @dev This is the key modifier for AI agent operations
+     */
     modifier onlyStrategyManager() {
-        require(msg.sender == aiStrategyManager, "Only strategy manager");
+        require(
+            msg.sender == aiStrategyManager ||
+                hasRole(AI_AGENT_ROLE, msg.sender) ||
+                hasRole(SUPER_ADMIN, msg.sender),
+            "Only strategy manager"
+        );
         _;
     }
+
+    // ============================================================================
+    // CONSTRUCTOR
+    // ============================================================================
 
     constructor(address _aiStrategyManager) Ownable(msg.sender) {
         aiStrategyManager = _aiStrategyManager;
         _initializeNetwork();
+        _setupRoles();
     }
 
-    function _initializeNetwork() internal {
-        uint256 chainId = block.chainid;
+    /**
+     * @notice Initialize role hierarchy
+     * @dev Deployer gets both DEFAULT_ADMIN_ROLE and SUPER_ADMIN
+     *      SUPER_ADMIN is the admin of AI_AGENT_ROLE
+     */
+    function _setupRoles() internal {
+        // Grant deployer the DEFAULT_ADMIN_ROLE and SUPER_ADMIN
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(SUPER_ADMIN, msg.sender);
+        
+        // Make SUPER_ADMIN the admin of AI_AGENT_ROLE
+        // This means only SUPER_ADMIN can grant/revoke AI_AGENT_ROLE
+        _setRoleAdmin(AI_AGENT_ROLE, SUPER_ADMIN);
+    }   
 
-        if (chainId == 8453) {
-            config = NetworkConfig({
-                positionManager: 0x03a520b32C04BF3bEEf7BEb72E919cf822Ed34f1, // CORRECTED ADDRESS
-                swapRouter: 0x2626664c2603336E57B271c5C0b26F421741e481,
-                factory: 0x33128a8fC17869897dcE68Ed026d694621f6FDfD,
-                usdc: 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913,
-                weth: 0x4200000000000000000000000000000000000006,
-                chainId: 8453
-            });
-        } else if (chainId == 84532) {
-            config = NetworkConfig({
-                positionManager: 0x27F971cb582BF9E50F397e4d29a5C7A34f11faA2,
-                swapRouter: 0x94cC0AaC535CCDB3C01d6787D6413C739ae12bc4,
-                factory: 0x4752ba5DBc23f44D87826276BF6Fd6b1C372aD24,
-                usdc: 0x036CbD53842c5426634e7929541eC2318f3dCF7e,
-                weth: 0x4200000000000000000000000000000000000006,
-                chainId: 84532
-            });
-        } else {
-            config = NetworkConfig({
-                positionManager: address(
-                    0x1234567890123456789012345678901234567890
-                ),
-                swapRouter: address(0x1234567890123456789012345678901234567891),
-                factory: address(0x1234567890123456789012345678901234567892),
-                usdc: address(0x1234567890123456789012345678901234567893),
-                weth: address(0x1234567890123456789012345678901234567894),
-                chainId: chainId
-            });
-        }
+    // ============================================================================
+    // SUPER ADMIN FUNCTIONS - AI AGENT MANAGEMENT
+    // ============================================================================
+
+    /**
+     * @notice Grant AI agent role to an address (SUPER_ADMIN only)
+     * @param agent Address to grant AI agent role
+     */
+    function setAIAgent(address agent) external onlyRole(SUPER_ADMIN) {
+        require(agent != address(0), "Invalid agent address");
+        grantRole(AI_AGENT_ROLE, agent);
+        emit AIAgentSet(agent);
+    }
+
+    /**
+     * @notice Revoke AI agent role from an address (SUPER_ADMIN only)
+     * @param agent Address to revoke AI agent role
+     */
+    function revokeAIAgent(address agent) external onlyRole(SUPER_ADMIN) {
+        revokeRole(AI_AGENT_ROLE, agent);
+        emit AIAgentRevoked(agent);
+    }
+
+    /**
+     * @notice Update the legacy aiStrategyManager address (SUPER_ADMIN only)
+     * @param _mgr New strategy manager address
+     */
+    function setAiStrategyManager(address _mgr) external onlyRole(SUPER_ADMIN) {
+        address old = aiStrategyManager;
+        aiStrategyManager = _mgr;
+        emit AiStrategyManagerUpdated(old, _mgr);
+    }
+
+    /**
+     * @notice Check if an address has AI agent role
+     * @param agent Address to check
+     * @return bool True if address has AI_AGENT_ROLE
+     */
+    function isAIAgent(address agent) external view returns (bool) {
+        return hasRole(AI_AGENT_ROLE, agent);
+    }
+
+    /**
+     * @notice Check if an address is super admin
+     * @param admin Address to check
+     * @return bool True if address has SUPER_ADMIN role
+     */
+    function isSuperAdmin(address admin) external view returns (bool) {
+        return hasRole(SUPER_ADMIN, admin);
     }
 
     // ============================================================================
-    // SETUP
+    // ADMIN SETUP FUNCTIONS
+    // ============================================================================
 
     function setPositionTracker(address _tracker) external onlyOwner {
         positionTracker = IUserPositionTracker(_tracker);
     }
 
     // ============================================================================
-    // DEPOSIT
+    // AI AGENT FUNCTIONS - DEPOSIT (Step 3-5 of user flow)
     // ============================================================================
 
+    /**
+     * @notice Deposit USDC and create Uniswap V3 position
+     * @dev Can be called by: aiStrategyManager, AI agents, or super admin
+     * @param usdcAmount Amount of USDC to deposit
+     * @param user User address for position tracking
+     */
     function depositUSDC(
         uint256 usdcAmount,
         address user
@@ -346,6 +432,9 @@ contract UniswapV3StrategyAdapter is ReentrancyGuard, Ownable, IERC721Receiver {
                 tickUpper
             );
 
+        // Update params to mint NFT directly to user
+        params.recipient = user;
+
         uint256 tokenId;
         uint128 liquidity;
 
@@ -355,6 +444,7 @@ contract UniswapV3StrategyAdapter is ReentrancyGuard, Ownable, IERC721Receiver {
             tokenId = _tokenId;
             liquidity = _liquidity;
         } catch {
+            // Fallback: create mock tokenId for tracking
             tokenId = uint256(
                 keccak256(abi.encodePacked(user, block.timestamp, usdcAmount))
             );
@@ -417,7 +507,7 @@ contract UniswapV3StrategyAdapter is ReentrancyGuard, Ownable, IERC721Receiver {
                 amount1Desired: amount1,
                 amount0Min: (amount0 * 95) / 100,
                 amount1Min: (amount1 * 95) / 100,
-                recipient: address(this),
+                recipient: address(this), // Will be updated in _addLiquidityToPool
                 deadline: block.timestamp + 300
             });
     }
@@ -445,8 +535,15 @@ contract UniswapV3StrategyAdapter is ReentrancyGuard, Ownable, IERC721Receiver {
         tokenIdToUser[tokenId] = user;
     }
 
-    // FEE COLLECTION - RECORDS REAL FEES FOR APY CALCULATION
+    // ============================================================================
+    // AI AGENT FUNCTIONS - FEE COLLECTION
+    // ============================================================================
 
+    /**
+     * @notice Collect fees from user's Uniswap position
+     * @dev Can be called by anyone, but typically by AI agent for optimization
+     * @param user User address
+     */
     function collectFees(address user) external {
         _collectFees(user);
     }
@@ -476,7 +573,7 @@ contract UniswapV3StrategyAdapter is ReentrancyGuard, Ownable, IERC721Receiver {
                 user
             );
 
-            // CRITICAL: Record actual fees collected for APY calculation
+            // Record actual fees collected for APY calculation
             if (address(positionTracker) != address(0) && totalFeesInUSDC > 0) {
                 positionTracker.recordFeeCollection(user, totalFeesInUSDC);
             }
@@ -529,6 +626,16 @@ contract UniswapV3StrategyAdapter is ReentrancyGuard, Ownable, IERC721Receiver {
         usdcReceived = ISwapRouter(config.swapRouter).exactInputSingle(params);
     }
 
+    // ============================================================================
+    // AI AGENT FUNCTIONS - WITHDRAWAL (Step 7 of user flow)
+    // ============================================================================
+
+    /**
+     * @notice Withdraw user's Uniswap position
+     * @dev Can be called by: aiStrategyManager, AI agents, or super admin
+     * @param user User address
+     * @param percentage Percentage to withdraw (1-100)
+     */
     function withdrawUserPosition(
         address user,
         uint256 percentage
@@ -591,15 +698,25 @@ contract UniswapV3StrategyAdapter is ReentrancyGuard, Ownable, IERC721Receiver {
         }
     }
 
+    // ============================================================================
+    // VIEW FUNCTIONS - APY & PERFORMANCE (Step 6 of user flow)
+    // ============================================================================
+
     /**
-     * @dev Get estimated APY for new positions (returns fixed estimate)
+     * @notice Get estimated APY for new positions
+     * @return Estimated APY in basis points (1500 = 15%)
      */
     function getEstimatedAPY() external pure returns (uint256) {
         return 1500; // 15% APY estimate in basis points
     }
 
     /**
-     * @dev Get user's ACTUAL APY based on real fees collected
+     * @notice Get user's ACTUAL APY based on real fees collected
+     * @param user User address
+     * @return userAPY Annualized return in basis points
+     * @return totalFeesEarned Total real fees earned in USDC
+     * @return daysActive Days position has been active
+     * @return dailyReturn Daily return in basis points
      */
     function getUserAPY(
         address user
@@ -607,10 +724,10 @@ contract UniswapV3StrategyAdapter is ReentrancyGuard, Ownable, IERC721Receiver {
         public
         view
         returns (
-            uint256 userAPY, // Annualized return in basis points
-            uint256 totalFeesEarned, // Total real fees earned in USDC
-            uint256 daysActive, // Days position active
-            uint256 dailyReturn // Daily return in basis points
+            uint256 userAPY,
+            uint256 totalFeesEarned,
+            uint256 daysActive,
+            uint256 dailyReturn
         )
     {
         if (address(positionTracker) == address(0)) {
@@ -630,7 +747,14 @@ contract UniswapV3StrategyAdapter is ReentrancyGuard, Ownable, IERC721Receiver {
     }
 
     /**
-     * @dev Get comprehensive user performance
+     * @notice Get comprehensive user performance metrics
+     * @param user User address
+     * @return depositAmount Original USDC deposited
+     * @return currentValue Current position value
+     * @return totalFeesEarned Total fees earned in USDC
+     * @return userAPY User's actual APY
+     * @return daysActive Days position has been active
+     * @return profitLoss Profit or loss amount
      */
     function getUserPerformance(
         address user
@@ -666,10 +790,11 @@ contract UniswapV3StrategyAdapter is ReentrancyGuard, Ownable, IERC721Receiver {
         );
     }
 
-    // ============================================================================
-    // VIEW FUNCTIONS
-    // ============================================================================
-
+    /**
+     * @notice Get user's current balance
+     * @param user User address
+     * @return Total balance including fees
+     */
     function getUserBalance(address user) external view returns (uint256) {
         UniswapPosition memory position = userPositions[user];
         if (position.tokenId == 0) return 0;
@@ -702,6 +827,15 @@ contract UniswapV3StrategyAdapter is ReentrancyGuard, Ownable, IERC721Receiver {
             uint256(tokensOwed1);
     }
 
+    /**
+     * @notice Get user's position details
+     * @param user User address
+     * @return tokenId NFT token ID
+     * @return liquidity Current liquidity
+     * @return originalUSDC Original USDC deposited
+     * @return pool Pool address
+     * @return fee Pool fee tier
+     */
     function getUserPosition(
         address user
     )
@@ -725,6 +859,10 @@ contract UniswapV3StrategyAdapter is ReentrancyGuard, Ownable, IERC721Receiver {
         );
     }
 
+    // ============================================================================
+    // EMERGENCY & UTILITY FUNCTIONS
+    // ============================================================================
+
     function onERC721Received(
         address,
         address,
@@ -746,5 +884,47 @@ contract UniswapV3StrategyAdapter is ReentrancyGuard, Ownable, IERC721Receiver {
         NetworkConfig calldata newConfig
     ) external onlyOwner {
         config = newConfig;
+    }
+
+    // ============================================================================
+    // NETWORK INITIALIZATION
+    // ============================================================================
+
+    function _initializeNetwork() internal {
+        uint256 chainId = block.chainid;
+
+        if (chainId == 8453) {
+            // Base Mainnet
+            config = NetworkConfig({
+                positionManager: 0x03a520b32C04BF3bEEf7BEb72E919cf822Ed34f1,
+                swapRouter: 0x2626664c2603336E57B271c5C0b26F421741e481,
+                factory: 0x33128a8fC17869897dcE68Ed026d694621f6FDfD,
+                usdc: 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913,
+                weth: 0x4200000000000000000000000000000000000006,
+                chainId: 8453
+            });
+        } else if (chainId == 84532) {
+            // Base Sepolia
+            config = NetworkConfig({
+                positionManager: 0x27F971cb582BF9E50F397e4d29a5C7A34f11faA2,
+                swapRouter: 0x94cC0AaC535CCDB3C01d6787D6413C739ae12bc4,
+                factory: 0x4752ba5DBc23f44D87826276BF6Fd6b1C372aD24,
+                usdc: 0x036CbD53842c5426634e7929541eC2318f3dCF7e,
+                weth: 0x4200000000000000000000000000000000000006,
+                chainId: 84532
+            });
+        } else {
+            // Local/Test Network
+            config = NetworkConfig({
+                positionManager: address(
+                    0x1234567890123456789012345678901234567890
+                ),
+                swapRouter: address(0x1234567890123456789012345678901234567891),
+                factory: address(0x1234567890123456789012345678901234567892),
+                usdc: address(0x1234567890123456789012345678901234567893),
+                weth: address(0x1234567890123456789012345678901234567894),
+                chainId: chainId
+            });
+        }
     }
 }
