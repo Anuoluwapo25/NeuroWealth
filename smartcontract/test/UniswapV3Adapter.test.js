@@ -16,8 +16,6 @@ describe("UniswapV3StrategyAdapter", function () {
         // Deploy adapter
         const UniswapV3StrategyAdapter = await ethers.getContractFactory("UniswapV3StrategyAdapter");
         adapter = await UniswapV3StrategyAdapter.deploy(strategyManager.address);
-
-        // The adapter will initialize with default config for testing
     });
 
     describe("Deployment", function () {
@@ -26,7 +24,6 @@ describe("UniswapV3StrategyAdapter", function () {
             expect(await adapter.owner()).to.equal(owner.address);
 
             const config = await adapter.config();
-            // Hardhat network can be either 1337 or 31337 depending on version
             expect([1337, 31337]).to.include(Number(config.chainId));
         });
 
@@ -63,8 +60,8 @@ describe("UniswapV3StrategyAdapter", function () {
                 positionManager: ethers.ZeroAddress,
                 swapRouter: ethers.ZeroAddress,
                 factory: ethers.ZeroAddress,
-                usdc: mockUSDC.target,
-                weth: mockWETH.target,
+                usdc: mockUSDC.target ?? mockUSDC.address, // works for both v5/v6
+                weth: mockWETH.target ?? mockWETH.address,
                 chainId: 1
             };
 
@@ -72,10 +69,7 @@ describe("UniswapV3StrategyAdapter", function () {
                 adapter.connect(user1).updateNetworkConfig(newConfig)
             ).to.be.revertedWithCustomError(adapter, "OwnableUnauthorizedAccount");
 
-            // Owner can update
-            await expect(
-                adapter.updateNetworkConfig(newConfig)
-            ).to.not.be.reverted;
+            await expect(adapter.updateNetworkConfig(newConfig)).to.not.be.reverted;
         });
 
         it("Should allow only owner to recover NFTs", async function () {
@@ -100,7 +94,6 @@ describe("UniswapV3StrategyAdapter", function () {
     describe("Deposit Functionality", function () {
         it("Should revert if called by non-strategy manager", async function () {
             const depositAmount = ethers.parseUnits("1000", 6);
-
             await expect(
                 adapter.connect(user1).depositUSDC(depositAmount, user1.address)
             ).to.be.revertedWith("Only strategy manager");
@@ -133,9 +126,7 @@ describe("UniswapV3StrategyAdapter", function () {
 
     describe("Fee Collection", function () {
         it("Should revert fee collection for non-existent position", async function () {
-            await expect(
-                adapter.collectFees(user2.address)
-            ).to.be.revertedWith("No position found");
+            await expect(adapter.collectFees(user2.address)).to.be.revertedWith("No position found");
         });
     });
 });

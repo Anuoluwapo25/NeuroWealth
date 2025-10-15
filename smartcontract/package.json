@@ -6,8 +6,10 @@
   "scripts": {
     "compile": "hardhat compile",
     "test": "hardhat test",
-    "test:unit": "hardhat test test/*.test.ts",
-    "test:integration": "hardhat test test/Integration.test.ts",
+    "test:unit": "hardhat test test/AIStrategyManagerV2.test.js test/UniswapV3StrategyAdapter.test.js",
+    "test:integration": "FORK=true hardhat test test/Integration.test.js",
+    "test:fork": "FORK=true hardhat test test/uniswap-fork.test.js",
+    "test:all": "npm run test:unit && npm run test:integration && npm run test:fork",
     "test:coverage": "hardhat coverage",
     "test:somnia": "hardhat test --network somniaTestnet",
     "deploy:testnet": "hardhat run scripts/deploy.ts --network somniaTestnet",
@@ -39,6 +41,7 @@
   "type": "commonjs",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^6.1.0",
+    "cross-env": "^10.1.0",
     "hardhat": "^2.26.1"
   },
   "dependencies": {
