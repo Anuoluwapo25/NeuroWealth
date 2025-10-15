@@ -49,12 +49,12 @@ export default function SupportPage() {
 
   const faqs = [
     {
-      question: 'How do I connect my wallet to Somnia?',
-      answer: 'Go to your wallet settings and add Somnia network with RPC URL: https://dream-rpc.somnia.network and Chain ID: 50312'
+      question: 'How do I connect my wallet to the network?',
+      answer: 'Go to your wallet settings and add the network with the appropriate RPC URL and Chain ID'
     },
     {
       question: 'Why is my transaction failing?',
-      answer: 'Common causes include insufficient gas, network congestion, or incorrect network. Make sure you\'re on Somnia network and have enough SOM for gas.'
+      answer: 'Common causes include insufficient gas, network congestion, or incorrect network. Make sure you\'re on the correct network and have enough native tokens for gas.'
     },
     {
       question: 'How do I upgrade my tier?',
@@ -207,7 +207,7 @@ export default function SupportPage() {
               {[
                 { service: 'Smart Contracts', status: 'Operational', uptime: '99.9%' },
                 { service: 'AI Strategy Engine', status: 'Operational', uptime: '99.8%' },
-                { service: 'Somnia Network', status: 'Operational', uptime: '99.7%' },
+                { service: 'Network', status: 'Operational', uptime: '99.7%' },
                 { service: 'Frontend Dashboard', status: 'Operational', uptime: '99.9%' },
               ].map((item, index) => (
                 <div key={index} className="text-center">

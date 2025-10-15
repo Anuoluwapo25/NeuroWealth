@@ -1,21 +1,21 @@
 # Testing Guide: Wagmi vs Ethers.js
 
 ## Overview
-This guide helps you test both implementations to determine which works better for your YieldMind transactions.
+This guide helps you test both implementations to determine which works better for your NeuroWealth transactions.
 
 ## Prerequisites
 1. **MetaMask Setup**:
    - Install MetaMask browser extension
-   - Add Somnia Testnet (Chain ID: 50312)
-   - Get STT test tokens from Somnia Discord
+   - Add Testnet (Chain ID: 50312)
+   - Get STT test tokens from our Discord
 
 2. **Network Configuration**:
    ```
-   Network Name: Somnia Testnet
-   RPC URL: https://dream-rpc.somnia.network
+   Network Name: Testnet
+   RPC URL: https://dream-rpc.network
    Chain ID: 50312
    Currency Symbol: STT
-   Block Explorer: https://explorer.somnia.network
+   Block Explorer: https://explorer.network
    ```
 
 ## Testing Steps
@@ -24,7 +24,7 @@ This guide helps you test both implementations to determine which works better f
 - Navigate to `/deposit` (Wagmi version)
 - Connect your wallet
 - Try depositing a small amount (e.g., 0.1 STT)
-- Monitor the transaction in MetaMask and Somnia Explorer
+- Monitor the transaction in MetaMask and Network Explorer
 - Note any errors or failures
 
 ### 2. Test Ethers.js Implementation
@@ -61,7 +61,7 @@ Both implementations log detailed debug information:
 - Monitor network requests
 
 ### Transaction Explorer
-- Use Somnia Explorer: https://explorer.somnia.network
+- Use Network Explorer: https://explorer.network
 - Check transaction status and gas usage
 - Look for revert reasons if transactions fail
 

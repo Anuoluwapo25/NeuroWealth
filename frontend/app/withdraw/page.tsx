@@ -12,9 +12,9 @@ import {
   executeWithdrawal, 
   getSTTBalance, 
   checkWalletConnection,
-  switchToSomniaTestnet,
+  switchToTestnet,
   getUserPosition,
-  SOMNIA_CONFIG
+  NETWORK_CONFIG
 } from '@/lib/ethers-provider';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
@@ -102,7 +102,7 @@ export default function WithdrawPage() {
 
   const connectWallet = async () => {
     try {
-      await switchToSomniaTestnet();
+      await switchToTestnet();
       await checkConnection();
       toast.success('Wallet connected successfully!');
     } catch (error: any) {
@@ -121,7 +121,7 @@ export default function WithdrawPage() {
     }
 
     if (!isCorrectNetwork) {
-      toast.error(`Please switch to Somnia Testnet (Chain ID: ${SOMNIA_CONFIG.chainId})`);
+      toast.error(`Please switch to Testnet (Chain ID: ${NETWORK_CONFIG.chainId})`);
       return;
     }
 
@@ -239,7 +239,7 @@ export default function WithdrawPage() {
             Withdraw Funds
           </h1>
           <p className="text-gray-300">
-            Withdraw your STT tokens and any earned yields from YieldMind
+            Withdraw your STT tokens and any earned yields from NeuroWealth
           </p>
         </div>
 
@@ -291,7 +291,7 @@ export default function WithdrawPage() {
                         <div>
                           <div className="text-red-400 font-semibold">Wrong Network</div>
                           <div className="text-gray-300 text-sm">
-                            Please switch to Somnia Testnet (Chain ID: {SOMNIA_CONFIG.chainId})
+                            Please switch to Testnet (Chain ID: {NETWORK_CONFIG.chainId})
                           </div>
                         </div>
                       </div>
@@ -357,7 +357,7 @@ export default function WithdrawPage() {
                   <div className="text-center py-6">
                     <TrendingDown className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                     <p className="text-gray-300 mb-2">No Active Position</p>
-                    <p className="text-gray-400 text-sm">You don&apos;t have any funds deposited in YieldMind</p>
+                    <p className="text-gray-400 text-sm">You don&apos;t have any funds deposited in NeuroWealth</p>
                     <Link href="/deposit" className="text-green-400 hover:text-green-300 text-sm mt-2 inline-block">
                       Make a deposit first →
                     </Link>
@@ -485,7 +485,7 @@ export default function WithdrawPage() {
                     <div className="text-sm">
                       <span className="text-gray-400">Hash: </span>
                       <a 
-                        href={`https://explorer.somnia.network/tx/${txHash}`}
+                        href={`https://explorer.network/tx/${txHash}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-blue-400 hover:text-blue-300 break-all"
@@ -513,7 +513,7 @@ export default function WithdrawPage() {
                   </div>
                 ) : 
                  !isConnected ? 'Connect Wallet First' :
-                 !isCorrectNetwork ? 'Switch to Somnia Testnet' :
+                 !isCorrectNetwork ? 'Switch to Testnet' :
                  withdrawalType === 'full' ? 'Withdraw All Funds' :
                  'Withdraw Funds'}
               </GradientButton>

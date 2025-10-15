@@ -8,17 +8,17 @@ import { GlowCard } from '@/components/ui/glow-card';
 import { RiskSlider } from '@/components/ui/risk-slider';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { StatusBadge } from '@/components/ui/status-badge';
-import { useYieldMindStore } from '@/lib/store';
+import { useNeuroWealthStore } from '@/lib/store';
 import { fetchProjectedAPY } from '@/lib/api';
-import { SOMNIA_TOKENS } from '@/lib/tokens';
+import { NETWORK_TOKENS } from '@/lib/tokens';
 import { 
   createEthersSigner, 
   executeDeposit, 
   getSTTBalance, 
   checkWalletConnection,
-  switchToSomniaTestnet,
+  switchToTestnet,
   checkContractState,
-  SOMNIA_CONFIG
+  NETWORK_CONFIG
 } from '@/lib/ethers-provider';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
@@ -35,7 +35,7 @@ export default function DepositPage() {
     setDepositAmount, 
     setProjectedAPY,
     setLoading
-  } = useYieldMindStore();
+  } = useNeuroWealthStore();
 
   const [isConnected, setIsConnected] = useState(false);
   const [address, setAddress] = useState<string | null>(null);
@@ -107,7 +107,7 @@ export default function DepositPage() {
 
   const connectWallet = async () => {
     try {
-      await switchToSomniaTestnet();
+      await switchToTestnet();
       await checkConnection();
       toast.success('Wallet connected successfully!');
     } catch (error: any) {
@@ -118,8 +118,8 @@ export default function DepositPage() {
 
   // Auto-select STT token on mount
   useEffect(() => {
-    if (!selectedToken && SOMNIA_TOKENS.length > 0) {
-      setSelectedToken(SOMNIA_TOKENS[0].symbol); // Set STT as default
+    if (!selectedToken && NETWORK_TOKENS.length > 0) {
+      setSelectedToken(NETWORK_TOKENS[0].symbol); // Set STT as default
     }
   }, [selectedToken, setSelectedToken]);
 
@@ -149,7 +149,7 @@ export default function DepositPage() {
     }
 
     if (!isCorrectNetwork) {
-      toast.error(`Please switch to Somnia Testnet (Chain ID: ${SOMNIA_CONFIG.chainId})`);
+      toast.error(`Please switch to Testnet (Chain ID: ${NETWORK_CONFIG.chainId})`);
       return;
     }
 
@@ -288,7 +288,7 @@ export default function DepositPage() {
                         <div>
                           <div className="text-red-400 font-semibold">Wrong Network</div>
                           <div className="text-gray-300 text-sm">
-                            Please switch to Somnia Testnet (Chain ID: {SOMNIA_CONFIG.chainId})
+                            Please switch to Testnet (Chain ID: {NETWORK_CONFIG.chainId})
                           </div>
                         </div>
                       </div>
@@ -314,7 +314,7 @@ export default function DepositPage() {
               {/* STT Token Selection */}
               <div className="mb-6">
                 <div className="grid grid-cols-1 gap-3">
-                  {SOMNIA_TOKENS.map((token) => (
+                  {NETWORK_TOKENS.map((token) => (
                     <button
                       key={token.symbol}
                       onClick={() => setSelectedToken(token.symbol)}
@@ -345,10 +345,10 @@ export default function DepositPage() {
                   <div>
                     <h4 className="text-green-400 font-semibold text-sm">STT Native Token</h4>
                     <p className="text-gray-300 text-sm mt-1">
-                      Deposit STT directly to the YieldMind Vault. No token approvals needed!
+                      Deposit STT directly to the NeuroWealth Vault. No token approvals needed!
                     </p>
                     <div className="mt-2 text-xs text-gray-400">
-                      <strong>Need STT test tokens?</strong> Join Somnia Discord → #dev-chat → Tag @emma_odia
+                      <strong>Need STT test tokens?</strong> Join our Discord → #dev-chat → Tag @support
                     </div>
                   </div>
                 </div>
@@ -480,7 +480,7 @@ export default function DepositPage() {
                     <div className="text-sm">
                       <span className="text-gray-400">Hash: </span>
                       <a 
-                        href={`https://explorer.somnia.network/tx/${txHash}`}
+                        href={`https://explorer.network/tx/${txHash}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-blue-400 hover:text-blue-300 break-all"
@@ -507,7 +507,7 @@ export default function DepositPage() {
                 </div>
               ) : 
                !isConnected ? 'Connect Wallet First' :
-               !isCorrectNetwork ? 'Switch to Somnia Testnet' :
+               !isCorrectNetwork ? 'Switch to Testnet' :
                contractStateError ? 'Contract Issue - Cannot Deposit' :
                'Deposit & Optimize'}
             </GradientButton>
@@ -550,11 +550,11 @@ export default function DepositPage() {
               <div className="space-y-3 text-sm text-gray-300 font-inter">
                 <div className="flex items-start space-x-2">
                   <div className="w-2 h-2 bg-green-400 rounded-full mt-2 flex-shrink-0 animate-pulse"></div>
-                  <p>Deposit STT to YieldMind Vault</p>
+                  <p>Deposit STT to NeuroWealth Vault</p>
                 </div>
                 <div className="flex items-start space-x-2">
                   <div className="w-2 h-2 bg-blue-400 rounded-full mt-2 flex-shrink-0 animate-pulse"></div>
-                  <p>AI analyzes Somnia DeFi protocols</p>
+                  <p>AI analyzes DeFi protocols</p>
                 </div>
                 <div className="flex items-start space-x-2">
                   <div className="w-2 h-2 bg-purple-400 rounded-full mt-2 flex-shrink-0 animate-pulse"></div>

@@ -201,7 +201,7 @@ export const SIMPLIFIED_VAULT_ABI = [
     "name": "mockProtocol",
     "outputs": [
       {
-        "internalType": "contract IMockSomniaProtocol",
+        "internalType": "contract IMockProtocol",
         "name": "",
         "type": "address"
       }

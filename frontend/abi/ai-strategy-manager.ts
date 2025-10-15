@@ -4,7 +4,7 @@ export const AI_STRATEGY_MANAGER_ABI =
     "inputs": [
       {
         "internalType": "address",
-        "name": "_yieldMindVault",
+        "name": "_neuroWealthVault",
         "type": "address"
       }
     ],
@@ -475,10 +475,10 @@ export const AI_STRATEGY_MANAGER_ABI =
   },
   {
     "inputs": [],
-    "name": "yieldMindVault",
+    "name": "neuroWealthVault",
     "outputs": [
       {
-        "internalType": "contract IYieldMindVault",
+        "internalType": "contract INeuroWealthVault",
         "name": "",
         "type": "address"
       }

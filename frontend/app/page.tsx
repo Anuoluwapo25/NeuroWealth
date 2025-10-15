@@ -27,7 +27,7 @@ export default function LandingPage() {
             </h1>
             
             <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
-              YieldMind leverages cutting-edge AI to automatically optimize your STT token investments across Somnia&apos;s ecosystem, 
+              NeuroWealth leverages cutting-edge AI to automatically optimize your STT token investments across multiple DeFi protocols, 
               delivering superior returns while managing risk intelligently.
             </p>
             
@@ -59,7 +59,7 @@ export default function LandingPage() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
               {[
                 { step: '1', title: 'Connect & Deposit', desc: 'Connect your wallet and deposit STT tokens to start earning' },
-                { step: '2', title: 'AI Analysis', desc: 'Our AI scans Somnia protocols for optimal yield opportunities' },
+                { step: '2', title: 'AI Analysis', desc: 'Our AI scans DeFi protocols for optimal yield opportunities' },
                 { step: '3', title: 'Auto-Deploy', desc: 'Funds automatically deployed across best-performing protocols' },
                 { step: '4', title: 'Earn & Grow', desc: 'Watch your portfolio grow with continuous optimization' },
               ].map((item, index) => (
@@ -101,7 +101,7 @@ export default function LandingPage() {
               <div className="text-4xl font-ibm-plex-mono font-bold text-purple-400 mb-2 animate-pulse">
                 5+
               </div>
-              <div className="text-gray-300">Somnia Protocols</div>
+              <div className="text-gray-300">DeFi Protocols</div>
             </div>
             
             <div className="text-center">
@@ -119,10 +119,10 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="font-space-grotesk text-4xl font-bold text-white mb-4">
-              Powered by Somnia&apos;s Best Protocols
+              Powered by Top DeFi Protocols
             </h2>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              Our AI automatically allocates your funds across Somnia&apos;s top-performing DeFi protocols
+              Our AI automatically allocates your funds across top-performing DeFi protocols
             </p>
           </div>
 
@@ -132,7 +132,7 @@ export default function LandingPage() {
               { name: 'QuickSwap', apy: '18%', risk: 'Medium', desc: 'DEX with swaps, LP staking, and yield farming' },
               { name: 'Haifu.fun', apy: '25%', risk: 'High', desc: 'AI-powered autonomous trading agents' },
               { name: 'Salt Treasury', apy: '8%', risk: 'Very Low', desc: 'Self-custodial treasury coordination' },
-              { name: 'Somnia Staking', apy: '15%', risk: 'Very Low', desc: 'Native SOMI token staking rewards' },
+              { name: 'Native Staking', apy: '15%', risk: 'Very Low', desc: 'Native token staking rewards' },
             ].map((protocol, index) => (
               <GlowCard key={index} className="p-6">
                 <div className="flex items-center justify-between mb-4">
@@ -244,10 +244,10 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="font-space-grotesk text-4xl font-bold text-white mb-4">
-              Why Choose YieldMind?
+              Why Choose NeuroWealth?
             </h2>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              Advanced AI technology meets Somnia&apos;s DeFi ecosystem to deliver superior returns
+              Advanced AI technology meets DeFi ecosystem to deliver superior returns
             </p>
           </div>
 
@@ -256,7 +256,7 @@ export default function LandingPage() {
               {
                 icon: Brain,
                 title: 'AI-Powered Optimization',
-                description: 'Advanced machine learning algorithms continuously analyze Somnia protocols to maximize your yields while managing risk.',
+                description: 'Advanced machine learning algorithms continuously analyze DeFi protocols to maximize your yields while managing risk.',
               },
               {
                 icon: Target,
@@ -305,10 +305,10 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="font-space-grotesk text-4xl font-bold text-white mb-4">
-              How YieldMind Works
+              How NeuroWealth Works
             </h2>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              Our AI-driven approach ensures optimal returns across Somnia&apos;s DeFi ecosystem
+              Our AI-driven approach ensures optimal returns across DeFi ecosystem
             </p>
           </div>
 
@@ -318,7 +318,7 @@ export default function LandingPage() {
                 {
                   step: '01',
                   title: 'AI Protocol Analysis',
-                  desc: 'Our AI continuously monitors Somnia protocols, analyzing APY, risk scores, and TVL to identify optimal opportunities.',
+                  desc: 'Our AI continuously monitors DeFi protocols, analyzing APY, risk scores, and TVL to identify optimal opportunities.',
                   icon: Cpu
                 },
                 {
@@ -359,7 +359,7 @@ export default function LandingPage() {
                 <h3 className="font-space-grotesk text-xl font-bold text-white mb-6">AI Strategy Example</h3>
                 <div className="space-y-4">
                   {[
-                    { protocol: 'Somnia Staking', allocation: '40%', apy: '15%', risk: 'Very Low' },
+                    { protocol: 'Native Staking', allocation: '40%', apy: '15%', risk: 'Very Low' },
                     { protocol: 'QuickSwap', allocation: '30%', apy: '18%', risk: 'Medium' },
                     { protocol: 'Standard Protocol', allocation: '20%', apy: '12%', risk: 'Low' },
                     { protocol: 'Haifu.fun', allocation: '10%', apy: '25%', risk: 'High' },
@@ -396,7 +396,7 @@ export default function LandingPage() {
               </span>
             </h2>
             <p className="text-xl text-gray-300 mb-8">
-              Join thousands of users already earning superior yields with YieldMind&apos;s AI-powered STT optimization on Somnia.
+              Join thousands of users already earning superior yields with NeuroWealth&apos;s AI-powered STT optimization.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link href="/deposit">
@@ -448,10 +448,10 @@ export default function LandingPage() {
             <div className="col-span-1 md:col-span-2">
               <div className="flex items-center space-x-2 mb-4">
                 <TrendingUp className="w-8 h-8 text-green-400" />
-                <span className="font-space-grotesk font-bold text-3xl text-white tracking-tight drop-shadow-lg">YieldMind</span>
+                <span className="font-space-grotesk font-bold text-3xl text-white tracking-tight drop-shadow-lg">NeuroWealth</span>
               </div>
               <p className="text-gray-400 mb-6 max-w-md">
-                The future of DeFi investing is here. AI-powered STT yield optimization on Somnia blockchain for superior returns.
+                The future of DeFi investing is here. AI-powered STT yield optimization for superior returns.
               </p>
               <div className="flex space-x-4">
                 <div className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-green-400/20 transition-colors cursor-pointer">
@@ -490,7 +490,7 @@ export default function LandingPage() {
           <div className="border-t border-slate-800 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center">
               <p className="text-gray-400 mb-4 md:mb-0">
-                © 2024 YieldMind. All rights reserved. Built on Somnia blockchain.
+                © 2024 NeuroWealth. All rights reserved. Built on advanced blockchain technology.
               </p>
               <div className="flex space-x-6 text-sm text-gray-400">
                 <Link href="/docs" className="hover:text-green-400 transition-colors">Privacy Policy</Link>

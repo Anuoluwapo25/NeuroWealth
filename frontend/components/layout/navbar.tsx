@@ -24,7 +24,7 @@ export function Navbar() {
               <TrendingUp className="w-6 h-6 text-white" />
             </div>
             <span className="font-heading font-bold text-xl text-white tracking-tight">
-              YieldMind
+              NeuroWealth
             </span>
           </Link>
 

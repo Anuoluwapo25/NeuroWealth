@@ -1,4 +1,4 @@
-export const YIELD_MIND_VAULT_ABI = [
+export const NEURO_WEALTH_VAULT_ABI = [
   {
     "inputs": [
       {
