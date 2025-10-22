@@ -1,38 +1,9 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("dotenv").config();
 
-// Multiple ways to detect fork mode for cross-platform compatibility
-const shouldFork = 
-  process.env.FORK === "true" || 
-  process.env.FORK === "1" || 
-  process.argv.includes("--fork") ||
-  process.argv.includes("Integration.test") ||
-  process.argv.includes("uniswap-fork.test");
-
-const hardhatConfig = {
-  chainId: shouldFork ? 8453 : 31337,
-  hardfork: shouldFork ? "cancun" : "shanghai", // Specify hardfork
-  gasPrice: shouldFork ? "auto" : undefined,
-  initialBaseFeePerGas: shouldFork ? 0 : undefined,
-  blockGasLimit: shouldFork ? 30000000 : undefined,
-};
-
-// Only add forking if enabled
-if (shouldFork && process.env.BASE_RPC_URL) {
-  hardhatConfig.forking = {
-    url: process.env.BASE_RPC_URL,
-    // Use latest block instead of pinning
-  };
-  console.log("🔱 Forking Base mainnet at", process.env.BASE_RPC_URL);
-} else if (shouldFork) {
-  hardhatConfig.forking = {
-    url: "https://mainnet.base.org",
-    // Use latest block instead of pinning
-  };
-  console.log("🔱 Forking Base mainnet (using default RPC)");
-} else {
-  console.log("🧪 Running unit tests without forking");
-}
+console.log("============================================");
+console.log("🔱 FORK MODE: Base Mainnet (Latest Block)");
+console.log("============================================");
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -48,8 +19,14 @@ module.exports = {
   },
   networks: {
     hardhat: {
-      ...hardhatConfig,
-      chains: shouldFork ? {
+      chainId: 8453,
+      forking: {
+        url: process.env.BASE_RPC_URL || "https://mainnet.base.org",
+        enabled: true,
+        // Using latest block - will be slower but ensures all contracts are deployed
+        // If you want faster tests, pin to a recent block (e.g., 30000000+)
+      },
+      chains: {
         8453: {
           hardforkHistory: {
             berlin: 0,
@@ -61,12 +38,13 @@ module.exports = {
             cancun: 0,
           },
         },
-      } : undefined,
-    },
-    baseMainnet: {
-      url: process.env.BASE_MAINNET_RPC || "https://mainnet.base.org",
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
-      chainId: 8453
+      },
+      // Fix gas price issues
+      gasPrice: "auto",
+      initialBaseFeePerGas: 0,
+      // Allow larger gas limits for complex transactions
+      blockGasLimit: 30000000,
+      allowUnlimitedContractSize: true,
     },
     baseSepolia: {
       url: process.env.BASE_SEPOLIA_RPC_URL || "https://sepolia.base.org",
@@ -78,6 +56,9 @@ module.exports = {
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       chainId: 8453,
     },
+  },
+  mocha: {
+    timeout: 120000, // Increased to 120 seconds for fork tests with latest block
   },
   etherscan: {
     apiKey: {
@@ -102,8 +83,5 @@ module.exports = {
         }
       }
     ]
-  },
-  mocha: {
-    timeout: 100000, // 100 seconds for fork tests
   },
 };

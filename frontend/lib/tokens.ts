@@ -1,4 +1,4 @@
-// Token configuration for network
+// Token configuration for Base mainnet
 // These addresses should be updated with real token addresses when available
 
 export interface TokenConfig {
