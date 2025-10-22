@@ -2,7 +2,7 @@
 
 **The Future of DeFi Investing is Here**
 
-NeuroWealth is like having a professional investment manager working 24/7 to grow your money, but instead of expensive fees and human limitations, it uses advanced AI to automatically find the best investment opportunities across Somnia's blockchain ecosystem.
+NeuroWealth is like having a professional investment manager working 24/7 to grow your money, but instead of expensive fees and human limitations, it uses advanced AI to automatically find the best investment opportunities across Base's DeFi ecosystem.
 
 ![NeuroWealth Banner](https://via.placeholder.com/1200x400/1e293b/10b981?text=YieldMind+-+AI-Powered+DeFi+Platform)
 
@@ -151,7 +151,7 @@ Think of NeuroWealth as your personal AI investment advisor that never sleeps. I
 ## 🚀 How It Works
 
 ### 1. AI Protocol Analysis
-Our AI continuously monitors Somnia protocols, analyzing APY, risk scores, and TVL to identify optimal opportunities.
+Our AI continuously monitors Base protocols, analyzing APY, risk scores, and TVL to identify optimal opportunities.
 
 ### 2. Risk-Adjusted Scoring
 Each protocol receives a risk-adjusted score using our proprietary formula: `(APY × 100) / √(Risk Score)`
@@ -166,27 +166,27 @@ Funds are automatically allocated across top-performing protocols based on your 
 
 | Tier | MIND Required | Deposit Limit | Rebalance Frequency | Features |
 |------|---------------|---------------|-------------------|----------|
-| **Free** | 0 MIND | 10,000 STT | 24 hours | Basic AI optimization, Standard protocols, Community support |
-| **Premium** | 100 MIND | 100,000 STT | 4 hours | Advanced AI strategies, Priority protocol access, Premium support, Higher APY opportunities |
-| **Pro** | 500 MIND | 1,000,000 STT | 1 hour | Maximum AI optimization, Exclusive protocols, Dedicated support, Custom strategies, Early access features |
+| **Free** | 0 MIND | 10,000 USDC | 24 hours | Basic AI optimization, Standard protocols, Community support |
+| **Premium** | 100 MIND | 100,000 USDC | 4 hours | Advanced AI strategies, Priority protocol access, Premium support, Higher APY opportunities |
+| **Pro** | 500 MIND | 1,000,000 USDC | 1 hour | Maximum AI optimization, Exclusive protocols, Dedicated support, Custom strategies, Early access features |
 
 ## 🏦 Supported Protocols
 
 NeuroWealth automatically allocates your funds across Base's top-performing DeFi protocols:
 
-- **Somnia Staking** - 15% APY (Very Low Risk)
-- **QuickSwap** - 18% APY (Medium Risk) 
-- **Standard Protocol** - 12% APY (Low Risk)
-- **Haifu.fun** - 25% APY (High Risk)
-- **Salt Treasury** - 8% APY (Very Low Risk)
+- **Aave V3 Lending Pool** - 8% APY (Very Low Risk)
+- **Compound III Comet** - 6% APY (Very Low Risk)
+- **Moonwell Lending Pool** - 10% APY (Low Risk)
+- **Aerodrome Finance DEX** - 25% APY (Medium Risk)
+- **Uniswap V3 DEX** - 20% APY (Medium Risk)
 
-*Expected Portfolio APY: 16.2%*
+*Expected Portfolio APY: 13.8%*
 
 ## 📈 Platform Statistics
 
 - **Total Value Locked**: $2M+
-- **Average APY**: 16.2%
-- **Supported Protocols**: 5+ Somnia protocols
+- **Average APY**: 13.8%
+- **Supported Protocols**: 5+ Base protocols
 - **AI Monitoring**: 24/7 continuous optimization
 - **Performance Fee**: Only 0.5% on profits
 
@@ -198,6 +198,7 @@ NeuroWealth automatically allocates your funds across Base's top-performing DeFi
 - **Tailwind CSS** - Utility-first styling
 - **Framer Motion** - Smooth animations
 - **Wagmi** - Ethereum wallet integration
+- **WalletConnect** - Multi-wallet connection support
 - **Ethers.js** - Blockchain interaction
 
 ### Smart Contracts
@@ -212,33 +213,69 @@ NeuroWealth automatically allocates your funds across Base's top-performing DeFi
 - **Real-time Data** - Continuous market monitoring
 - **Performance Metrics** - Comprehensive analytics dashboard
 
+## 🔧 Development Setup
+
+### Environment Variables
+Create a `.env.local` file in the frontend directory with the following variables:
+
+```bash
+# WalletConnect Configuration
+NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=your_walletconnect_project_id_here
+
+# Base Network Configuration
+NEXT_PUBLIC_BASE_RPC_URL=https://mainnet.base.org
+NEXT_PUBLIC_BASE_CHAIN_ID=8453
+
+# USDC Contract Address on Base
+NEXT_PUBLIC_USDC_ADDRESS=0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913
+
+# Smart Contract Addresses (to be deployed)
+NEXT_PUBLIC_VAULT_ADDRESS=
+NEXT_PUBLIC_MIND_STAKING_ADDRESS=
+NEXT_PUBLIC_STRATEGY_MANAGER_ADDRESS=
+```
+
+### Installation
+```bash
+# Frontend
+cd frontend
+npm install
+npm run dev
+
+# Smart Contracts
+cd smartcontract
+npm install
+npx hardhat compile
+```
+
 ## 🚀 Getting Started (Super Simple!)
 
 ### **Step 1: Get a Digital Wallet** 
 - Download MetaMask (like a digital bank account)
 - It's free and takes 2 minutes to set up
-- This is where your STT tokens will be stored
+- This is where your USDC tokens will be stored
 
-### **Step 2: Connect to Somnia Network**
-- Open MetaMask and add Somnia network
-- **Network Name**: Somnia Testnet
-- **RPC URL**: `https://dream-rpc.somnia.network`
-- **Chain ID**: `50312`
-- **Currency Symbol**: STT
+### **Step 2: Connect to Base Network**
+- Open MetaMask and add Base network
+- **Network Name**: Base
+- **RPC URL**: `https://mainnet.base.org`
+- **Chain ID**: `8453`
+- **Currency Symbol**: ETH
 
-### **Step 3: Get STT Tokens**
-- STT tokens are like Somnia's version of dollars
-- You can get them from Somnia's faucet (free test tokens)
-- Or exchange other crypto for STT tokens
+### **Step 3: Get USDC Tokens**
+- USDC is a stablecoin pegged to the US dollar
+- Bridge USDC from Ethereum to Base
+- Buy USDC directly on Base DEXs
+- Use centralized exchanges that support Base
 
 ### **Step 4: Start Earning!**
 - Go to YieldMind's deposit page
 - Connect your wallet
-- Deposit STT tokens (minimum 0.1 STT - about $0.10)
+- Deposit USDC tokens (minimum 10 USDC)
 - Watch your money grow automatically!
 
 ### **That's It!** 
-- Your money is now earning 16%+ annually
+- Your money is now earning 13.8%+ annually
 - AI handles all the complex investment decisions
 - You can check your earnings anytime on the dashboard
 - Withdraw your money whenever you want
@@ -292,11 +329,12 @@ NeuroWealth automatically allocates your funds across Base's top-performing DeFi
 
 ## 🌐 Network Information
 
-- **Blockchain**: Somnia Testnet
-- **Native Token**: STT (Somnia Test Token)
+- **Blockchain**: Base Mainnet
+- **Native Token**: ETH (Ethereum)
+- **Stablecoin**: USDC (USD Coin)
 - **Governance Token**: MIND (YieldMind Token)
-- **RPC Endpoint**: `https://dream-rpc.somnia.network`
-- **Explorer**: `https://explorer.somnia.network`
+- **RPC Endpoint**: `https://mainnet.base.org`
+- **Explorer**: `https://basescan.org`
 
 ## 📚 Documentation
 
@@ -323,14 +361,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- Somnia blockchain team for providing the infrastructure
+- Base blockchain team for providing the infrastructure
 - OpenZeppelin for security standards
 - The DeFi community for inspiration and collaboration
 
 ---
 
-**Ready to maximize your STT returns?** 
+**Ready to maximize your USDC returns?** 
 
 [🚀 Start Earning Now](/deposit) | [📊 View Dashboard](/dashboard) | [📖 Read Docs](/docs)
 
-*Built with ❤️ on Somnia blockchain*
+*Built with ❤️ on Base blockchain*

@@ -10,15 +10,15 @@ export interface TokenConfig {
   logoUrl?: string;
 }
 
-// Network token configuration - STT only
+// Network token configuration - Base USDC
 export const NETWORK_TOKENS: TokenConfig[] = [
   {
-    symbol: 'STT',
-    name: 'Testnet Token',
-    address: '0x0000000000000000000000000000000000000000', // Native token - use msg.value
-    decimals: 18,
-    isNative: true,
-    logoUrl: '/tokens/stt.svg'
+    symbol: 'USDC',
+    name: 'USD Coin',
+    address: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913', // Base mainnet USDC
+    decimals: 6,
+    isNative: false,
+    logoUrl: '/tokens/usdc.svg'
   }
 ];
 
@@ -61,25 +61,25 @@ export const MOCK_TOKEN_ADDRESSES = {
   SOMI: '0x0000000000000000000000000000000000000000' // Native token
 };
 
-// Instructions for testnet - STT only
+// Instructions for Base mainnet - USDC
 export const TOKEN_UPDATE_INSTRUCTIONS = `
-Testnet Configuration - STT Only:
+Base Mainnet Configuration - USDC:
 
-✅ Focused on STT (Testnet Token) for simplicity and testing.
+✅ Using Base mainnet with USDC for production deployment.
 
-Native Token:
-- STT: Testnet Token (native, no contract address needed)
+ERC20 Token:
+- USDC: USD Coin on Base mainnet (0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913)
 
-Getting STT Test Tokens:
-- Join our Discord: https://discord.gg/neurowealth
-- Go to #dev-chat channel
-- Tag @support for STT test tokens
-- Or email: [email protected]
+Getting USDC:
+- Bridge USDC from Ethereum to Base
+- Buy USDC directly on Base DEXs
+- Use centralized exchanges that support Base
 
 Resources:
 - Documentation: https://docs.neurowealth.com
-- Network Info: https://docs.neurowealth.com/developer/network-info
-- Testnet Explorer: https://explorer.network
+- Base Network: https://base.org
+- Base Explorer: https://basescan.org
+- USDC on Base: https://basescan.org/token/0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913
 
-Note: ERC20 tokens will be added later once STT integration is perfected.
+Note: Production deployment on Base mainnet with USDC integration.
 `;

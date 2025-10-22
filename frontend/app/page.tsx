@@ -27,7 +27,7 @@ export default function LandingPage() {
             </h1>
             
             <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
-              NeuroWealth leverages cutting-edge AI to automatically optimize your STT token investments across multiple DeFi protocols, 
+              NeuroWealth leverages cutting-edge AI to automatically optimize your USDC investments across multiple DeFi protocols, 
               delivering superior returns while managing risk intelligently.
             </p>
             
@@ -35,7 +35,7 @@ export default function LandingPage() {
             <div className="mb-8 p-4 bg-gradient-to-r from-green-400/10 to-blue-500/10 border border-green-400/20 rounded-xl">
               <div className="flex items-center justify-center space-x-2 text-green-400">
                 <CheckCircle className="w-5 h-5" />
-                <span className="font-semibold">Ready to start earning? Connect your wallet and deposit STT tokens to begin!</span>
+                <span className="font-semibold">Ready to start earning? Connect your wallet and deposit USDC to begin!</span>
               </div>
             </div>
             
@@ -58,7 +58,7 @@ export default function LandingPage() {
             {/* Process Flow */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
               {[
-                { step: '1', title: 'Connect & Deposit', desc: 'Connect your wallet and deposit STT tokens to start earning' },
+                { step: '1', title: 'Connect & Deposit', desc: 'Connect your wallet and deposit USDC to start earning' },
                 { step: '2', title: 'AI Analysis', desc: 'Our AI scans DeFi protocols for optimal yield opportunities' },
                 { step: '3', title: 'Auto-Deploy', desc: 'Funds automatically deployed across best-performing protocols' },
                 { step: '4', title: 'Earn & Grow', desc: 'Watch your portfolio grow with continuous optimization' },
@@ -128,11 +128,11 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              { name: 'Standard Protocol', apy: '12%', risk: 'Low', desc: 'On-chain CLOB with spot/perpetual trading' },
-              { name: 'QuickSwap', apy: '18%', risk: 'Medium', desc: 'DEX with swaps, LP staking, and yield farming' },
-              { name: 'Haifu.fun', apy: '25%', risk: 'High', desc: 'AI-powered autonomous trading agents' },
-              { name: 'Salt Treasury', apy: '8%', risk: 'Very Low', desc: 'Self-custodial treasury coordination' },
-              { name: 'Native Staking', apy: '15%', risk: 'Very Low', desc: 'Native token staking rewards' },
+              { name: 'Aave V3 Lending', apy: '8%', risk: 'Very Low', desc: 'Decentralized lending protocol with USDC support' },
+              { name: 'Compound III', apy: '6%', risk: 'Very Low', desc: 'Money market protocol for USDC lending' },
+              { name: 'Moonwell Lending', apy: '10%', risk: 'Low', desc: 'Community-driven lending protocol on Base' },
+              { name: 'Aerodrome Finance', apy: '25%', risk: 'Medium', desc: 'Leading DEX on Base with high yield farming' },
+              { name: 'Uniswap V3', apy: '20%', risk: 'Medium', desc: 'Advanced AMM with concentrated liquidity' },
             ].map((protocol, index) => (
               <GlowCard key={index} className="p-6">
                 <div className="flex items-center justify-between mb-4">
@@ -166,25 +166,25 @@ export default function LandingPage() {
               {
                 tier: 'Free',
                 mindRequired: '0 MIND',
-                depositLimit: '10,000 STT',
+                depositLimit: '10,000 USDC',
                 rebalanceFreq: '24 hours',
-                features: ['Basic AI optimization', 'Standard protocols', 'Community support'],
+                features: ['Basic AI optimization', 'Base protocols', 'Community support'],
                 color: 'from-gray-400 to-gray-600'
               },
               {
                 tier: 'Premium',
                 mindRequired: '100 MIND',
-                depositLimit: '100,000 STT',
+                depositLimit: '100,000 USDC',
                 rebalanceFreq: '4 hours',
-                features: ['Advanced AI strategies', 'Priority protocol access', 'Premium support', 'Higher APY opportunities'],
+                features: ['Advanced AI strategies', 'Priority Base protocol access', 'Premium support', 'Higher APY opportunities'],
                 color: 'from-blue-400 to-blue-600'
               },
               {
                 tier: 'Pro',
                 mindRequired: '500 MIND',
-                depositLimit: '1,000,000 STT',
+                depositLimit: '1,000,000 USDC',
                 rebalanceFreq: '1 hour',
-                features: ['Maximum AI optimization', 'Exclusive protocols', 'Dedicated support', 'Custom strategies', 'Early access features'],
+                features: ['Maximum AI optimization', 'Exclusive Base protocols', 'Dedicated support', 'Custom strategies', 'Early access features'],
                 color: 'from-green-400 to-green-600'
               }
             ].map((tier, index) => (
@@ -359,10 +359,10 @@ export default function LandingPage() {
                 <h3 className="font-space-grotesk text-xl font-bold text-white mb-6">AI Strategy Example</h3>
                 <div className="space-y-4">
                   {[
-                    { protocol: 'Native Staking', allocation: '40%', apy: '15%', risk: 'Very Low' },
-                    { protocol: 'QuickSwap', allocation: '30%', apy: '18%', risk: 'Medium' },
-                    { protocol: 'Standard Protocol', allocation: '20%', apy: '12%', risk: 'Low' },
-                    { protocol: 'Haifu.fun', allocation: '10%', apy: '25%', risk: 'High' },
+                    { protocol: 'Aave V3 Lending', allocation: '35%', apy: '8%', risk: 'Very Low' },
+                    { protocol: 'Aerodrome Finance', allocation: '30%', apy: '25%', risk: 'Medium' },
+                    { protocol: 'Uniswap V3', allocation: '20%', apy: '20%', risk: 'Medium' },
+                    { protocol: 'Moonwell Lending', allocation: '15%', apy: '10%', risk: 'Low' },
                   ].map((item, index) => (
                     <div key={index} className="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
                       <div>
@@ -392,11 +392,11 @@ export default function LandingPage() {
             <h2 className="font-space-grotesk text-4xl md:text-5xl font-bold text-white mb-6">
               Ready to Maximize Your{' '}
               <span className="bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
-                STT Returns?
+                USDC Returns?
               </span>
             </h2>
             <p className="text-xl text-gray-300 mb-8">
-              Join thousands of users already earning superior yields with NeuroWealth&apos;s AI-powered STT optimization.
+              Join thousands of users already earning superior yields with NeuroWealth&apos;s AI-powered USDC optimization.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link href="/deposit">
@@ -451,7 +451,7 @@ export default function LandingPage() {
                 <span className="font-space-grotesk font-bold text-3xl text-white tracking-tight drop-shadow-lg">NeuroWealth</span>
               </div>
               <p className="text-gray-400 mb-6 max-w-md">
-                The future of DeFi investing is here. AI-powered STT yield optimization for superior returns.
+                The future of DeFi investing is here. AI-powered USDC yield optimization for superior returns.
               </p>
               <div className="flex space-x-4">
                 <div className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-green-400/20 transition-colors cursor-pointer">

@@ -14,9 +14,9 @@ import { NETWORK_TOKENS } from '@/lib/tokens';
 import { 
   createEthersSigner, 
   executeDeposit, 
-  getSTTBalance, 
+  getUSDCBalance, 
   checkWalletConnection,
-  switchToTestnet,
+  switchToBaseMainnet,
   checkContractState,
   NETWORK_CONFIG
 } from '@/lib/ethers-provider';
@@ -39,7 +39,7 @@ export default function DepositPage() {
 
   const [isConnected, setIsConnected] = useState(false);
   const [address, setAddress] = useState<string | null>(null);
-  const [sttBalance, setSttBalance] = useState('0');
+  const [usdcBalance, setUsdcBalance] = useState('0');
   const [isBalanceLoading, setIsBalanceLoading] = useState(false);
   const [isDepositing, setIsDepositing] = useState(false);
   const [isCorrectNetwork, setIsCorrectNetwork] = useState(false);
@@ -84,11 +84,11 @@ export default function DepositPage() {
   const fetchBalance = async (userAddress: string) => {
     try {
       setIsBalanceLoading(true);
-      const balance = await getSTTBalance(userAddress);
-      setSttBalance(balance);
+      const balance = await getUSDCBalance(userAddress);
+      setUsdcBalance(balance);
     } catch (error) {
       console.error('Failed to fetch balance:', error);
-      toast.error('Failed to fetch STT balance');
+      toast.error('Failed to fetch USDC balance');
     } finally {
       setIsBalanceLoading(false);
     }
@@ -107,7 +107,7 @@ export default function DepositPage() {
 
   const connectWallet = async () => {
     try {
-      await switchToTestnet();
+      await switchToBaseMainnet();
       await checkConnection();
       toast.success('Wallet connected successfully!');
     } catch (error: any) {
@@ -116,10 +116,10 @@ export default function DepositPage() {
     }
   };
 
-  // Auto-select STT token on mount
+  // Auto-select USDC token on mount
   useEffect(() => {
     if (!selectedToken && NETWORK_TOKENS.length > 0) {
-      setSelectedToken(NETWORK_TOKENS[0].symbol); // Set STT as default
+      setSelectedToken(NETWORK_TOKENS[0].symbol); // Set USDC as default
     }
   }, [selectedToken, setSelectedToken]);
 
@@ -159,10 +159,10 @@ export default function DepositPage() {
     }
 
     const depositValue = parseFloat(depositAmount);
-    const balanceValue = parseFloat(sttBalance);
+    const balanceValue = parseFloat(usdcBalance);
 
     if (depositValue > balanceValue) {
-      toast.error(`Insufficient STT balance. You have ${sttBalance} STT, trying to deposit ${depositAmount} STT`);
+      toast.error(`Insufficient USDC balance. You have ${usdcBalance} USDC, trying to deposit ${depositAmount} USDC`);
       return;
     }
 
@@ -172,7 +172,7 @@ export default function DepositPage() {
 
     try {
       console.log('🔍 Ethers Debug: Executing deposit...');
-      console.log('🔍 Ethers Debug: Amount:', depositAmount, 'STT');
+      console.log('🔍 Ethers Debug: Amount:', depositAmount, 'USDC');
       console.log('🔍 Ethers Debug: Address:', address);
       
       const result = await executeDeposit(depositAmount);
@@ -276,7 +276,7 @@ export default function DepositPage() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-white font-semibold">{sttBalance} STT</div>
+                      <div className="text-white font-semibold">{usdcBalance} USDC</div>
                       <div className="text-gray-400 text-sm">Balance</div>
                     </div>
                   </div>
@@ -308,10 +308,10 @@ export default function DepositPage() {
             {/* Token Selection */}
             <GlowCard className="transition-transform duration-200 hover:scale-[1.02] hover:shadow-glow-card">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-space-grotesk text-lg font-bold text-white tracking-tight">STT Token</h3>
+                <h3 className="font-space-grotesk text-lg font-bold text-white tracking-tight">USDC Token</h3>
               </div>
               
-              {/* STT Token Selection */}
+              {/* USDC Token Selection */}
               <div className="mb-6">
                 <div className="grid grid-cols-1 gap-3">
                   {NETWORK_TOKENS.map((token) => (
@@ -327,7 +327,7 @@ export default function DepositPage() {
                       <div className="text-white font-bold text-2xl">{token.symbol}</div>
                       <div className="text-lg text-gray-300 mt-1">{token.name}</div>
                       <div className="text-lg text-gray-200 mt-2">
-                        Balance: {isBalanceLoading ? 'Loading...' : `${parseFloat(sttBalance).toFixed(4)} STT`}
+                        Balance: {isBalanceLoading ? 'Loading...' : `${parseFloat(usdcBalance).toFixed(4)} USDC`}
                       </div>
                       <div className="text-sm text-green-400 mt-2 flex items-center">
                         <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
@@ -338,17 +338,17 @@ export default function DepositPage() {
                 </div>
               </div>
               
-              {/* STT Info */}
+              {/* USDC Info */}
               <div className="mt-4 p-4 bg-green-400/10 border border-green-400/20 rounded-xl">
                 <div className="flex items-start space-x-2">
                   <div className="w-2 h-2 bg-green-400 rounded-full mt-2 flex-shrink-0"></div>
                   <div>
-                    <h4 className="text-green-400 font-semibold text-sm">STT Native Token</h4>
+                    <h4 className="text-green-400 font-semibold text-sm">USDC Token</h4>
                     <p className="text-gray-300 text-sm mt-1">
-                      Deposit STT directly to the NeuroWealth Vault. No token approvals needed!
+                      Deposit USDC to the NeuroWealth Vault. Token approval required for ERC20.
                     </p>
                     <div className="mt-2 text-xs text-gray-400">
-                      <strong>Need STT test tokens?</strong> Join our Discord → #dev-chat → Tag @support
+                      <strong>Need USDC?</strong> Bridge from Ethereum or buy on Base DEXs
                     </div>
                   </div>
                 </div>
@@ -368,16 +368,16 @@ export default function DepositPage() {
                   disabled={!isConnected || !isCorrectNetwork}
                 />
                 <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                  STT
+                  USDC
                 </div>
               </div>
               
               <div className="flex justify-between mt-2 text-sm">
                 <span className="text-gray-400">
-                  Available: {isBalanceLoading ? 'Loading...' : `${parseFloat(sttBalance).toFixed(2)} STT`}
+                  Available: {isBalanceLoading ? 'Loading...' : `${parseFloat(usdcBalance).toFixed(2)} USDC`}
                 </span>
                 <button 
-                  onClick={() => setDepositAmount(sttBalance)}
+                  onClick={() => setDepositAmount(usdcBalance)}
                   className="text-green-400 hover:text-white transition-colors"
                   disabled={!isConnected || !isCorrectNetwork}
                 >
@@ -424,11 +424,11 @@ export default function DepositPage() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Min Deposit</span>
-                      <span className="text-white font-semibold">{contractState.minDeposit} STT</span>
+                      <span className="text-white font-semibold">{contractState.minDeposit} USDC</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Max Deposit</span>
-                      <span className="text-white font-semibold">{contractState.maxDeposit} STT</span>
+                      <span className="text-white font-semibold">{contractState.maxDeposit} USDC</span>
                     </div>
                     <div className="text-xs text-gray-400">
                       <div>MindStaking: {contractState.mindStakingAddress}</div>
@@ -446,7 +446,7 @@ export default function DepositPage() {
                       <div className="mt-1">
                         <span className="text-gray-500">Protocol Balance: </span>
                         <span className="text-blue-400 font-semibold">
-                          {contractState.protocolBalance} STT
+                          {contractState.protocolBalance} USDC
                         </span>
                       </div>
                     </div>
@@ -525,7 +525,7 @@ export default function DepositPage() {
                 <div className="flex justify-between">
                   <span className="text-slate-400 font-inter">Deposit Amount</span>
                   <span className="text-white font-ibm-plex-mono font-semibold">
-                    {depositValue.toLocaleString()} STT
+                    {depositValue.toLocaleString()} USDC
                   </span>
                 </div>
                 
@@ -539,7 +539,7 @@ export default function DepositPage() {
                 <div className="flex justify-between">
                   <span className="text-slate-400 font-inter">Annual Earnings</span>
                   <span className="text-blue-400 font-ibm-plex-mono font-semibold">
-                    {projectedEarnings.toLocaleString()} STT
+                    {projectedEarnings.toLocaleString()} USDC
                   </span>
                 </div>
               </div>
@@ -550,7 +550,7 @@ export default function DepositPage() {
               <div className="space-y-3 text-sm text-gray-300 font-inter">
                 <div className="flex items-start space-x-2">
                   <div className="w-2 h-2 bg-green-400 rounded-full mt-2 flex-shrink-0 animate-pulse"></div>
-                  <p>Deposit STT to NeuroWealth Vault</p>
+                  <p>Deposit USDC to NeuroWealth Vault</p>
                 </div>
                 <div className="flex items-start space-x-2">
                   <div className="w-2 h-2 bg-blue-400 rounded-full mt-2 flex-shrink-0 animate-pulse"></div>

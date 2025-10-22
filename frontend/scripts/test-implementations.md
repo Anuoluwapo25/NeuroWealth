@@ -6,16 +6,16 @@ This guide helps you test both implementations to determine which works better f
 ## Prerequisites
 1. **MetaMask Setup**:
    - Install MetaMask browser extension
-   - Add Testnet (Chain ID: 50312)
-   - Get STT test tokens from our Discord
+   - Add Base mainnet (Chain ID: 8453)
+   - Get USDC tokens (bridge from Ethereum or buy on Base DEXs)
 
 2. **Network Configuration**:
    ```
-   Network Name: Testnet
-   RPC URL: https://dream-rpc.network
-   Chain ID: 50312
-   Currency Symbol: STT
-   Block Explorer: https://explorer.network
+   Network Name: Base
+   RPC URL: https://mainnet.base.org
+   Chain ID: 8453
+   Currency Symbol: ETH
+   Block Explorer: https://basescan.org
    ```
 
 ## Testing Steps
@@ -23,14 +23,14 @@ This guide helps you test both implementations to determine which works better f
 ### 1. Test Wagmi Implementation
 - Navigate to `/deposit` (Wagmi version)
 - Connect your wallet
-- Try depositing a small amount (e.g., 0.1 STT)
+- Try depositing a small amount (e.g., 10 USDC)
 - Monitor the transaction in MetaMask and Network Explorer
 - Note any errors or failures
 
 ### 2. Test Ethers.js Implementation
 - Navigate to `/deposit-ethers` (Ethers version)
 - Connect your wallet
-- Try depositing the same amount (e.g., 0.1 STT)
+- Try depositing the same amount (e.g., 10 USDC)
 - Monitor the transaction process
 - Compare the experience with Wagmi
 
@@ -105,5 +105,5 @@ Based on transaction failures, **try Ethers.js first**:
 If you encounter issues:
 1. Check browser console for debug logs
 2. Verify MetaMask and network settings
-3. Ensure you have sufficient STT balance
+3. Ensure you have sufficient USDC balance
 4. Try different RPC endpoints if needed

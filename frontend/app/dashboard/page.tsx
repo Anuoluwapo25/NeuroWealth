@@ -17,7 +17,7 @@ import { useNeuroWealthStore } from '@/lib/store';
 
 import { 
   checkWalletConnection, 
-  getSTTBalance, 
+  getUSDCBalance, 
   checkContractState,
   getNeuroWealthVaultContract,
   claimRewards,
@@ -92,7 +92,7 @@ export default function DashboardPage() {
         }
 
         // Load user balance
-        const balance = await getSTTBalance(connection.address);
+        const balance = await getUSDCBalance(connection.address);
         setUserBalance(balance);
 
         // Load contract state
@@ -160,7 +160,7 @@ export default function DashboardPage() {
       setWalletConnection(connection);
       
       if (connection.isConnected && connection.address) {
-        const balance = await getSTTBalance(connection.address);
+        const balance = await getUSDCBalance(connection.address);
         setUserBalance(balance);
 
         const contractData = await checkContractState(connection.address);
@@ -283,14 +283,14 @@ export default function DashboardPage() {
       type: 'opportunity' as const,
       title: '15% APY Active',
       description: 'Your funds are earning 15% APY through Yield Protocol. This is a great yield!',
-      impact: `+${(totalReturns * 0.15).toFixed(4)} STT daily`,
+      impact: `+${(totalReturns * 0.15).toFixed(4)} USDC daily`,
       confidence: 95,
     },
     {
       type: 'optimization' as const,
       title: 'Rewards Available to Claim',
-      description: `You have ${parseFloat(pendingRewards).toFixed(4)} STT in pending rewards. Claim them to maximize your returns!`,
-      impact: `+${parseFloat(pendingRewards).toFixed(4)} STT available`,
+      description: `You have ${parseFloat(pendingRewards).toFixed(4)} USDC in pending rewards. Claim them to maximize your returns!`,
+      impact: `+${parseFloat(pendingRewards).toFixed(4)} USDC available`,
       confidence: 92,
     },
     {
@@ -348,7 +348,7 @@ export default function DashboardPage() {
                     Claiming...
                   </div>
                 ) : (
-                  `Claim Rewards (${parseFloat(pendingRewards).toFixed(4)} STT)`
+                  `Claim Rewards (${parseFloat(pendingRewards).toFixed(4)} USDC)`
                 )}
               </GradientButton>
               
@@ -369,7 +369,7 @@ export default function DashboardPage() {
                   <Skeleton className="h-8 w-24 mt-1" />
                 ) : (
                   <p className="text-2xl font-bold text-white">
-                    {(parseFloat(platformStats.totalValueLocked) / 1e18).toFixed(4)} STT
+                    {(parseFloat(platformStats.totalValueLocked) / 1e6).toFixed(4)} USDC
                   </p>
                 )}
               </div>
@@ -401,7 +401,7 @@ export default function DashboardPage() {
                   <Skeleton className="h-8 w-20 mt-1" />
                 ) : (
                   <p className="text-2xl font-bold text-white">
-                    {parseFloat(userBalance).toFixed(4)} STT
+                    {parseFloat(userBalance).toFixed(4)} USDC
                   </p>
                 )}
               </div>
@@ -417,7 +417,7 @@ export default function DashboardPage() {
                   <Skeleton className="h-8 w-20 mt-1" />
                 ) : (
                   <p className="text-2xl font-bold text-yellow-400">
-                    {parseFloat(pendingRewards).toFixed(4)} STT
+                    {parseFloat(pendingRewards).toFixed(4)} USDC
                   </p>
                 )}
               </div>
@@ -450,21 +450,21 @@ export default function DashboardPage() {
           <GlowCard>
             <div className="text-center">
               <p className="text-sm text-gray-400 mb-2">Principal Invested</p>
-              <p className="text-2xl font-bold text-white">{principalValue.toFixed(4)} STT</p>
+              <p className="text-2xl font-bold text-white">{principalValue.toFixed(4)} USDC</p>
             </div>
           </GlowCard>
           
           <GlowCard>
             <div className="text-center">
               <p className="text-sm text-gray-400 mb-2">Current Value</p>
-              <p className="text-2xl font-bold text-green-400">{currentValue.toFixed(4)} STT</p>
+              <p className="text-2xl font-bold text-green-400">{currentValue.toFixed(4)} USDC</p>
             </div>
           </GlowCard>
           
           <GlowCard>
             <div className="text-center">
               <p className="text-sm text-gray-400 mb-2">Total Returns</p>
-              <p className="text-2xl font-bold text-blue-400">{totalReturns.toFixed(4)} STT</p>
+              <p className="text-2xl font-bold text-blue-400">{totalReturns.toFixed(4)} USDC</p>
             </div>
           </GlowCard>
           

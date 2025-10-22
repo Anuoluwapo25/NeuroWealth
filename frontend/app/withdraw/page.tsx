@@ -10,9 +10,9 @@ import { StatusBadge } from '@/components/ui/status-badge';
 import { 
   createEthersSigner, 
   executeWithdrawal, 
-  getSTTBalance, 
+  getUSDCBalance, 
   checkWalletConnection,
-  switchToTestnet,
+  switchToBaseMainnet,
   getUserPosition,
   NETWORK_CONFIG
 } from '@/lib/ethers-provider';
@@ -24,7 +24,7 @@ type WithdrawalType = 'partial' | 'full';
 export default function WithdrawPage() {
   const [isConnected, setIsConnected] = useState(false);
   const [address, setAddress] = useState<string | null>(null);
-  const [sttBalance, setSttBalance] = useState('0');
+  const [usdcBalance, setUsdcBalance] = useState('0');
   const [isBalanceLoading, setIsBalanceLoading] = useState(false);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
   const [isCorrectNetwork, setIsCorrectNetwork] = useState(false);
@@ -79,11 +79,11 @@ export default function WithdrawPage() {
   const fetchBalance = async (userAddress: string) => {
     try {
       setIsBalanceLoading(true);
-      const balance = await getSTTBalance(userAddress);
-      setSttBalance(balance);
+      const balance = await getUSDCBalance(userAddress);
+      setUsdcBalance(balance);
     } catch (error) {
       console.error('Failed to fetch balance:', error);
-      toast.error('Failed to fetch STT balance');
+      toast.error('Failed to fetch USDC balance');
     } finally {
       setIsBalanceLoading(false);
     }
@@ -102,7 +102,7 @@ export default function WithdrawPage() {
 
   const connectWallet = async () => {
     try {
-      await switchToTestnet();
+      await switchToBaseMainnet();
       await checkConnection();
       toast.success('Wallet connected successfully!');
     } catch (error: any) {
@@ -143,7 +143,7 @@ export default function WithdrawPage() {
       const availableAmount = parseFloat(userPosition.currentValue);
       
       if (requestedAmount > availableAmount) {
-        toast.error(`Insufficient balance. Available: ${availableAmount.toFixed(4)} STT`);
+        toast.error(`Insufficient balance. Available: ${availableAmount.toFixed(4)} USDC`);
         return;
       }
       
@@ -156,7 +156,7 @@ export default function WithdrawPage() {
 
     try {
       console.log('🔍 Ethers Debug: Executing withdrawal...');
-      console.log('🔍 Ethers Debug: Amount:', withdrawAmount, 'STT');
+      console.log('🔍 Ethers Debug: Amount:', withdrawAmount, 'USDC');
       console.log('🔍 Ethers Debug: Type:', withdrawalType);
       console.log('🔍 Ethers Debug: Address:', address);
       
@@ -168,7 +168,7 @@ export default function WithdrawPage() {
       setTxHash(result.hash);
       setTxStatus('confirmed');
       
-      toast.success('Withdrawal successful! Your STT tokens have been returned.');
+      toast.success('Withdrawal successful! Your USDC tokens have been returned.');
       
       // Reset form
       setWithdrawalAmount('');
@@ -239,7 +239,7 @@ export default function WithdrawPage() {
             Withdraw Funds
           </h1>
           <p className="text-gray-300">
-            Withdraw your STT tokens and any earned yields from NeuroWealth
+            Withdraw your USDC tokens and any earned yields from NeuroWealth
           </p>
         </div>
 
@@ -279,7 +279,7 @@ export default function WithdrawPage() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-white font-semibold">{sttBalance} STT</div>
+                      <div className="text-white font-semibold">{usdcBalance} USDC</div>
                       <div className="text-gray-400 text-sm">Wallet Balance</div>
                     </div>
                   </div>
@@ -328,18 +328,18 @@ export default function WithdrawPage() {
                     <div className="grid grid-cols-2 gap-4">
                       <div className="p-4 bg-blue-400/10 border border-blue-400/20 rounded-xl">
                         <div className="text-blue-400 font-semibold">Current Value</div>
-                        <div className="text-white text-xl font-bold">{currentValue.toFixed(4)} STT</div>
+                        <div className="text-white text-xl font-bold">{currentValue.toFixed(4)} USDC</div>
                       </div>
                       <div className="p-4 bg-green-400/10 border border-green-400/20 rounded-xl">
                         <div className="text-green-400 font-semibold">Total Returns</div>
-                        <div className="text-white text-xl font-bold">{totalReturns.toFixed(4)} STT</div>
+                        <div className="text-white text-xl font-bold">{totalReturns.toFixed(4)} USDC</div>
                       </div>
                     </div>
                     
                     <div className="p-4 bg-gray-800/50 rounded-xl">
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-400">Principal Invested:</span>
-                        <span className="text-white">{principal.toFixed(4)} STT</span>
+                        <span className="text-white">{principal.toFixed(4)} USDC</span>
                       </div>
                       <div className="flex justify-between text-sm mt-1">
                         <span className="text-gray-400">User Tier:</span>
@@ -416,13 +416,13 @@ export default function WithdrawPage() {
                           disabled={withdrawalType !== 'partial'}
                         />
                         <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                          STT
+                          USDC
                         </div>
                       </div>
                       
                       <div className="flex justify-between mt-2 text-sm">
                         <span className="text-gray-400">
-                          Available: {currentValue.toFixed(4)} STT
+                          Available: {currentValue.toFixed(4)} USDC
                         </span>
                         <button 
                           onClick={() => setWithdrawalAmount(currentValue.toString())}
@@ -442,7 +442,7 @@ export default function WithdrawPage() {
                       <div className="flex justify-between">
                         <span className="text-gray-400">Amount:</span>
                         <span className="text-white">
-                          {withdrawalType === 'full' ? currentValue.toFixed(4) : parseFloat(withdrawalAmount || '0').toFixed(4)} STT
+                          {withdrawalType === 'full' ? currentValue.toFixed(4) : parseFloat(withdrawalAmount || '0').toFixed(4)} USDC
                         </span>
                       </div>
                       <div className="flex justify-between">
@@ -455,7 +455,7 @@ export default function WithdrawPage() {
                           {withdrawalType === 'full' 
                             ? currentValue.toFixed(4) 
                             : parseFloat(withdrawalAmount || '0').toFixed(4)
-                          } STT
+                          } USDC
                         </span>
                       </div>
                     </div>
@@ -543,7 +543,7 @@ export default function WithdrawPage() {
                 </div>
                 <div className="flex items-start space-x-2">
                   <div className="w-2 h-2 bg-yellow-400 rounded-full mt-2 flex-shrink-0"></div>
-                  <p>STT tokens are returned to your wallet</p>
+                  <p>USDC tokens are returned to your wallet</p>
                 </div>
               </div>
             </GlowCard>
@@ -558,8 +558,8 @@ export default function WithdrawPage() {
                   </div>
                 </div>
                 <div className="text-xs text-gray-400">
-                  <strong>Example:</strong> If you deposited 100 STT and it&apos;s now worth 110 STT, 
-                  you only pay 0.5% on the 10 STT profit = 0.05 STT fee.
+                  <strong>Example:</strong> If you deposited 100 USDC and it&apos;s now worth 110 USDC, 
+                  you only pay 0.5% on the 10 USDC profit = 0.05 USDC fee.
                 </div>
               </div>
             </GlowCard>

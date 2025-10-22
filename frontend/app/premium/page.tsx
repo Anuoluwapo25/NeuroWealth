@@ -14,7 +14,7 @@ const PLATFORM_FEATURES = [
     name: 'Core DeFi Features',
     description: 'Essential blockchain functionality',
     features: [
-      'Native STT token deposits & withdrawals',
+      'USDC deposits & withdrawals',
       '15% APY yield generation',
       'Real-time position tracking',
       'Secure MetaMask integration',
@@ -60,7 +60,7 @@ const PLATFORM_FEATURES = [
 const PLATFORM_STATS = [
   {
     title: 'Total Value Locked',
-    value: '0.9914 STT',
+    value: '0.9914 USDC',
     description: 'Real funds secured on blockchain',
     color: 'text-blue-400',
     icon: Activity,
@@ -261,7 +261,7 @@ export default function PremiumPage() {
                 Ready to Start Earning?
               </h2>
               <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
-                Join NeuroWealth and start earning 15% APY on your STT tokens. 
+                Join NeuroWealth and start earning 15% APY on your USDC. 
                 Professional DeFi platform with real yield generation and advanced analytics.
               </p>
               

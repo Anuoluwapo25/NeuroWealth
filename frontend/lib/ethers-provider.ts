@@ -3,19 +3,19 @@ import { NeuroWealthVaultContract } from '@/abi';
 
 // Network configuration
 export const NETWORK_CONFIG = {
-  chainId: 50312,
-  name: 'Testnet',
+  chainId: 8453,
+  name: 'Base',
   rpcUrls: [
-    'https://dream-rpc.network',
-    'https://testnet-rpc.network',
-    'https://rpc.network'
+    'https://mainnet.base.org',
+    'https://base-mainnet.public.blastapi.io',
+    'https://base.blockpi.network/v1/rpc/public'
   ],
   nativeCurrency: {
-    name: 'STT',
-    symbol: 'STT',
+    name: 'Ethereum',
+    symbol: 'ETH',
     decimals: 18,
   },
-  blockExplorer: 'https://explorer.network'
+  blockExplorer: 'https://basescan.org'
 };
 
 // Create ethers provider with fallback RPCs
@@ -48,7 +48,7 @@ export const createEthersSigner = async () => {
   // Verify we're on the correct network
   const network = await provider.getNetwork();
   if (Number(network.chainId) !== NETWORK_CONFIG.chainId) {
-    throw new Error(`Please switch to Testnet (Chain ID: ${NETWORK_CONFIG.chainId})`);
+    throw new Error(`Please switch to Base mainnet (Chain ID: ${NETWORK_CONFIG.chainId})`);
   }
   
   return signer;
@@ -64,25 +64,23 @@ export const getNeuroWealthVaultContract = async () => {
   );
 };
 
-// Estimate gas with proper error handling
+// Estimate gas with proper error handling (USDC)
 export const estimateDepositGas = async (amount: string) => {
   try {
     const contract = await getNeuroWealthVaultContract();
-    const amountWei = ethers.parseEther(amount);
+    const amountWei = ethers.parseUnits(amount, 6); // USDC has 6 decimals
     
-    // Estimate gas for deposit function
-    const gasEstimate = await contract.deposit.estimateGas({
-      value: amountWei
-    });
+    // Estimate gas for deposit function (no value for ERC20 tokens)
+    const gasEstimate = await contract.deposit.estimateGas(amountWei);
     
-      // Add 20% buffer
-      const gasWithBuffer = (gasEstimate * BigInt(120)) / BigInt(100);
+    // Add 20% buffer
+    const gasWithBuffer = (gasEstimate * BigInt(120)) / BigInt(100);
     
     return gasWithBuffer;
   } catch (error) {
     console.error('Gas estimation failed:', error);
-      // Return a reasonable fallback
-      return BigInt(200000);
+    // Return a reasonable fallback
+    return BigInt(200000);
   }
 };
 
@@ -99,11 +97,11 @@ export const checkContractState = async (userAddress: string) => {
     
     // Check minimum deposit
     const minDeposit = await contract.MIN_DEPOSIT();
-    console.log('🔍 Ethers Debug: Min deposit:', ethers.formatEther(minDeposit), 'STT');
+    console.log('🔍 Ethers Debug: Min deposit:', ethers.formatUnits(minDeposit, 6), 'USDC');
     
     // Check maximum deposit
     const maxDeposit = await contract.MAX_DEPOSIT();
-    console.log('🔍 Ethers Debug: Max deposit:', ethers.formatEther(maxDeposit), 'STT');
+    console.log('🔍 Ethers Debug: Max deposit:', ethers.formatUnits(maxDeposit, 6), 'USDC');
     
     // Check MindStaking contract
     const mindStakingAddress = await contract.mindStaking();
@@ -117,9 +115,9 @@ export const checkContractState = async (userAddress: string) => {
     try {
       const userPosition = await contract.userPositions(userAddress);
       console.log('🔍 Ethers Debug: User position:', {
-        principal: ethers.formatEther(userPosition.principal),
-        currentValue: ethers.formatEther(userPosition.currentValue),
-        totalReturns: ethers.formatEther(userPosition.totalReturns),
+        principal: ethers.formatUnits(userPosition.principal, 6),
+        currentValue: ethers.formatUnits(userPosition.currentValue, 6),
+        totalReturns: ethers.formatUnits(userPosition.totalReturns, 6),
         lastUpdateTime: new Date(Number(userPosition.lastUpdateTime) * 1000).toISOString()
       });
     } catch (tierError: any) {
@@ -134,16 +132,16 @@ export const checkContractState = async (userAddress: string) => {
     // Get protocol balance from vault instead of direct protocol call
     try {
       const protocolBalanceWei = await contract.getProtocolBalance();
-      protocolBalance = ethers.formatEther(protocolBalanceWei);
-      console.log('🔍 Ethers Debug: Protocol balance from vault:', protocolBalance, 'STT');
+      protocolBalance = ethers.formatUnits(protocolBalanceWei, 6);
+      console.log('🔍 Ethers Debug: Protocol balance from vault:', protocolBalance, 'USDC');
     } catch (error: any) {
       console.log('🔍 Ethers Debug: Could not get protocol balance:', error?.message);
     }
     
     return {
       isPaused,
-      minDeposit: ethers.formatEther(minDeposit),
-      maxDeposit: ethers.formatEther(maxDeposit),
+      minDeposit: ethers.formatUnits(minDeposit, 6),
+      maxDeposit: ethers.formatUnits(maxDeposit, 6),
       mindStakingAddress,
       mockProtocolAddress,
       mockProtocolStatus,
@@ -155,7 +153,7 @@ export const checkContractState = async (userAddress: string) => {
   }
 };
 
-// Execute deposit with ethers
+// Execute deposit with ethers (USDC)
 export const executeDeposit = async (amount: string) => {
   try {
     const signer = await createEthersSigner();
@@ -165,20 +163,40 @@ export const executeDeposit = async (amount: string) => {
     await checkContractState(userAddress);
     
     const contract = await getNeuroWealthVaultContract();
-    const amountWei = ethers.parseEther(amount);
+    const amountWei = ethers.parseUnits(amount, 6); // USDC has 6 decimals
+    
+    // USDC contract address on Base mainnet
+    const usdcAddress = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913';
+    
+    // Create USDC contract instance
+    const usdcContract = new ethers.Contract(
+      usdcAddress,
+      ['function approve(address, uint256) returns (bool)', 'function allowance(address, address) view returns (uint256)'],
+      signer
+    );
+    
+    // Check current allowance
+    const currentAllowance = await usdcContract.allowance(userAddress, contract.target);
+    
+    // If allowance is insufficient, approve the contract
+    if (currentAllowance < amountWei) {
+      console.log('🔍 Ethers Debug: Approving USDC spending...');
+      const approveTx = await usdcContract.approve(contract.target, amountWei);
+      await approveTx.wait();
+      console.log('🔍 Ethers Debug: USDC approval confirmed');
+    }
     
     // Estimate gas first
     const gasLimit = await estimateDepositGas(amount);
     
     console.log('🔍 Ethers Debug: Executing deposit with:');
-    console.log('🔍 Ethers Debug: - Amount:', amount, 'STT');
-    console.log('🔍 Ethers Debug: - Amount (wei):', amountWei.toString());
+    console.log('🔍 Ethers Debug: - Amount:', amount, 'USDC');
+    console.log('🔍 Ethers Debug: - Amount (units):', amountWei.toString());
     console.log('🔍 Ethers Debug: - Gas limit:', gasLimit.toString());
     console.log('🔍 Ethers Debug: - User address:', userAddress);
     
-    // Execute transaction
-    const tx = await contract.deposit({
-      value: amountWei,
+    // Execute transaction (no value for ERC20 tokens)
+    const tx = await contract.deposit(amountWei, {
       gasLimit: gasLimit
     });
     
@@ -204,14 +222,27 @@ export const executeDeposit = async (amount: string) => {
   }
 };
 
-// Get balance with ethers
-export const getSTTBalance = async (address: string) => {
+// Get USDC balance with ethers
+export const getUSDCBalance = async (address: string) => {
   try {
     const provider = createEthersProvider();
-    const balance = await provider.getBalance(address);
-    return ethers.formatEther(balance);
+    // USDC contract address on Base mainnet
+    const usdcAddress = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913';
+    
+    // Create USDC contract instance
+    const usdcContract = new ethers.Contract(
+      usdcAddress,
+      ['function balanceOf(address) view returns (uint256)', 'function decimals() view returns (uint8)'],
+      provider
+    );
+    
+    const balance = await usdcContract.balanceOf(address);
+    const decimals = await usdcContract.decimals();
+    
+    // Format balance with correct decimals (USDC has 6 decimals)
+    return ethers.formatUnits(balance, decimals);
   } catch (error: any) {
-    console.error('Failed to get STT balance:', error);
+    console.error('Failed to get USDC balance:', error);
     return '0';
   }
 };
@@ -241,7 +272,7 @@ export const checkWalletConnection = async () => {
   }
 };
 
-// Execute withdrawal with ethers
+// Execute withdrawal with ethers (USDC)
 export const executeWithdrawal = async (amount: string) => {
   try {
     const signer = await createEthersSigner();
@@ -251,14 +282,14 @@ export const executeWithdrawal = async (amount: string) => {
     await checkContractState(userAddress);
     
     const contract = await getNeuroWealthVaultContract();
-    const amountWei = ethers.parseEther(amount);
+    const amountWei = ethers.parseUnits(amount, 6); // USDC has 6 decimals
     
     // Estimate gas first
     const gasLimit = await estimateWithdrawalGas(amount);
     
     console.log('🔍 Ethers Debug: Executing withdrawal with:');
-    console.log('🔍 Ethers Debug: - Amount:', amount, 'STT');
-    console.log('🔍 Ethers Debug: - Amount (wei):', amountWei.toString());
+    console.log('🔍 Ethers Debug: - Amount:', amount, 'USDC');
+    console.log('🔍 Ethers Debug: - Amount (units):', amountWei.toString());
     console.log('🔍 Ethers Debug: - Gas limit:', gasLimit.toString());
     console.log('🔍 Ethers Debug: - User address:', userAddress);
     
@@ -289,11 +320,11 @@ export const executeWithdrawal = async (amount: string) => {
   }
 };
 
-// Estimate gas for withdrawal
+// Estimate gas for withdrawal (USDC)
 export const estimateWithdrawalGas = async (amount: string) => {
   try {
     const contract = await getNeuroWealthVaultContract();
-    const amountWei = ethers.parseEther(amount);
+    const amountWei = ethers.parseUnits(amount, 6); // USDC has 6 decimals
     
     // Estimate gas for withdrawal function
     const gasEstimate = await contract.withdraw.estimateGas(amountWei);
@@ -309,16 +340,16 @@ export const estimateWithdrawalGas = async (amount: string) => {
   }
 };
 
-// Get user position from vault
+// Get user position from vault (USDC)
 export const getUserPosition = async (userAddress: string) => {
   try {
     const contract = await getNeuroWealthVaultContract();
     const position = await contract.userPositions(userAddress);
     
     return {
-      principal: ethers.formatEther(position.principal),
-      currentValue: ethers.formatEther(position.currentValue),
-      totalReturns: ethers.formatEther(position.totalReturns),
+      principal: ethers.formatUnits(position.principal, 6), // USDC has 6 decimals
+      currentValue: ethers.formatUnits(position.currentValue, 6),
+      totalReturns: ethers.formatUnits(position.totalReturns, 6),
       userTier: '2' // Default to Pro tier for SimplifiedVault
     };
   } catch (error: any) {
@@ -344,16 +375,16 @@ export const claimRewards = async () => {
     
     // Get current position
     const position = await contract.userPositions(await createEthersSigner().then(s => s.getAddress()));
-    const currentValue = parseFloat(position.currentValue.toString()) / 1e18;
-    const principal = parseFloat(position.principal.toString()) / 1e18;
+    const currentValue = parseFloat(position.currentValue.toString()) / 1e6; // USDC has 6 decimals
+    const principal = parseFloat(position.principal.toString()) / 1e6;
     
     // Calculate simulated rewards (15% APY for demonstration)
     const timeElapsed = Math.floor(Date.now() / 1000) - Number(position.lastUpdateTime);
     const apy = 0.15; // 15% APY
     const rewards = (principal * apy * timeElapsed) / (365 * 24 * 3600); // Per second
     
-    if (rewards > 0.001) { // Only claim if rewards > 0.001 STT
-      console.log(`🔍 Ethers Debug: Simulated rewards: ${rewards.toFixed(4)} STT`);
+    if (rewards > 0.001) { // Only claim if rewards > 0.001 USDC
+      console.log(`🔍 Ethers Debug: Simulated rewards: ${rewards.toFixed(4)} USDC`);
       
       // For now, just return success - in production this would update the contract
       return {
@@ -377,7 +408,7 @@ export const getPendingRewards = async (userAddress: string) => {
     const position = await contract.userPositions(userAddress);
     
     // Calculate simulated pending rewards (15% APY)
-    const principal = parseFloat(position.principal.toString()) / 1e18;
+    const principal = parseFloat(position.principal.toString()) / 1e6; // USDC has 6 decimals
     const timeElapsed = Math.floor(Date.now() / 1000) - Number(position.lastUpdateTime);
     const apy = 0.15; // 15% APY
     const pendingRewards = (principal * apy * timeElapsed) / (365 * 24 * 3600); // Per second
@@ -395,8 +426,8 @@ export const getPendingRewards = async (userAddress: string) => {
   }
 };
 
-// Switch to Testnet
-export const switchToTestnet = async () => {
+// Switch to Base mainnet
+export const switchToBaseMainnet = async () => {
   if (typeof window === 'undefined' || !window.ethereum) {
     throw new Error('MetaMask not detected');
   }

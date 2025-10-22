@@ -1,42 +1,42 @@
 import { getDefaultConfig } from '@rainbow-me/rainbowkit';
 import { http, createConfig } from 'wagmi';
 
-// Define Testnet only - STT Focus Mode
-const testnetChain = {
-  id: 50312,
-  name: 'Testnet',
+// Define Base mainnet
+const baseChain = {
+  id: 8453,
+  name: 'Base',
   nativeCurrency: {
-    name: 'STT',
-    symbol: 'STT',
+    name: 'Ethereum',
+    symbol: 'ETH',
     decimals: 18,
   },
   rpcUrls: {
     default: {
       http: [
-        'https://dream-rpc.network',
-        'https://testnet-rpc.network',
-        'https://rpc.network'
+        'https://mainnet.base.org',
+        'https://base-mainnet.public.blastapi.io',
+        'https://base.blockpi.network/v1/rpc/public'
       ],
     },
     public: {
       http: [
-        'https://dream-rpc.network',
-        'https://testnet-rpc.network',
-        'https://rpc.network'
+        'https://mainnet.base.org',
+        'https://base-mainnet.public.blastapi.io',
+        'https://base.blockpi.network/v1/rpc/public'
       ],
     },
   },
   blockExplorers: {
     default: {
-      name: 'Network Explorer',
-      url: 'https://explorer.network',
+      name: 'BaseScan',
+      url: 'https://basescan.org',
     },
   },
 } as const;
 
 export const wagmiConfig = getDefaultConfig({
   appName: 'NeuroWealth',
-  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'YOUR_PROJECT_ID', // Set this in .env.local
-  chains: [testnetChain], // Testnet only - STT Focus Mode
+  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!,
+  chains: [baseChain], // Base mainnet
   ssr: false,
 });
